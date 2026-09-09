@@ -1,0 +1,31 @@
+Que es vite?
+vite es una herramienta super buena para el desarrollo, la cual hace la transpilacion del codigo de typescript a javascript y va pasando esto a el navegador, nos
+permite hacer hot reload esto lo hace por modulos, lo que significa que con esto no es necesario bajar el proyecto y volver a subirlo para que se puedan ver los cambios
+sino que cada vez qeu sea hace un cambio vite se encarga de actulizarlo instantanemente.
+
+Ayuda a compilar.
+
+Quien verifica la sintaxis de Typescripts?
+De la sintaxis de typescript del fuertemente tipado se encarga un programa especifico que se instala en el momento que descargas vite y decides trabajar con typescript,
+podemos activar este programa con el comando "tsc".
+
+Que son los comandos de paquetes?
+Son comandos que vienen con ciertos paquetes que se pueden encontrar en el repositorio de npm.
+
+Que es NPX?
+NPX es un ejecutador de comandos de paquetes el cual permite ejecutar comandos de paquetes que no estan instalados en el computador, osea que obtiene un version rapida del paquetes
+y luego la borra despues de haberla ejecutado, tambien es una forma mas rapida de ejecutar comandos de paquetes ya que es npx busca si es que el paquete esta instalado localmente
+luego busca globlamente y si no lo encuentra lo descarga temporalmente, entonces tu no tienes que preocuparte por decirle explcitamente donde esta el archivo binario que debe
+ejecutar ya que npx lo hace por si mismo.
+
+Que es unicode?
+Unicode es todo un diccionario el cual asigna para cada tipo de caracter o emoji un numero, es extredamente amplio ya que tiene asiganado un numero para casi cualquier caracacter
+existenete.
+
+Que es UTF-8?
+es el mecanismo que decide como se escribira este numero en bits, ya que no todos los tipos de caracteres necesitan la misma cantidad de bit, hay algunos que necesitan mas otros
+que necesitan menos esto depende en el numero que tenga asignado en el unicode, entonces se necesita a UTF-8 para decidir cuantos bits utilizara de 8-32.
+
+Que es ASCCI?
+ASCCI es un charset antiguo el cual no ya no se usa el cual permitia escribir solamente el alfabeto occidental en bits sin emojis, pero tambien era el diccionario
+que asignaba un numero a cada caracter.

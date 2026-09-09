@@ -1,0 +1,31 @@
+{
+
+  // This configure how the compiler of TypeScript compiles the code
+  "compilerOptions": {
+    "target": "es2023",
+    "module": "esnext",
+    "lib": ["ES2023", "DOM"],
+    "types": ["vite/client"],
+    "allowArbitraryExtensions": true,
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+
+    /* Linting */
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    // Esto hace que solamente se pueda usar typescript que se pueda borrar facilmente, osea que la traduccion del typescript a javascript sea directa y no tenga que hacer cosas raras 
+    // como por ejemplo usar un enum, ya que los enums no se pueden simplmente borrar sino que se tiene que modificar el codigo para que haga 
+    // lo que el enum hacia, por eso usamos un objeto en vez de un enum
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true
+  },
+
+  // This said to the compiler which files it needs to compile 
+  "include": ["src", "src/TileTypeEnum.ts"]
+}

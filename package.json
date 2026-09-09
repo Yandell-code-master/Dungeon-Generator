@@ -1,0 +1,20 @@
+{
+  "//" : "This is a file where we put all the configuration related to the npm system, basicly we put here the name and version of our package (means project, remember that npm is a global repository so your project is like a package in this repository, but this is important just in case that you want to publish your project) and the the dependencies that we are going to use", 
+  "_name-explanation" : "The name and the version is just important if you want to publish the project",
+  "name": "dungeon-generator",
+  "private": true,
+  "_version-explanation" : "this have to be change every time that you make a modify in the package",
+  "version": "0.0.0",
+  "type": "module",
+  "_scripts-explanation" : "This part is for pre-built scripts that are going to be ejecuted in a certain point of the development stages",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "_devDependencies-explanation" : "This part is for the dependencies that are necesary while developing",
+  "devDependencies": {
+    "typescript": "~6.0.2",
+    "vite": "^8.2.0"
+  }
+}
