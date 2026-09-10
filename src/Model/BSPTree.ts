@@ -26,15 +26,19 @@ export class BSPTree {
         const didSplit = this.splitNode(node);
 
         // Si el corte fue exitoso, dividimos recursivamente a sus dos hijos
-        if (didSplit && node.leftChild && node.rightChild) {
-            this.splitTreeLevel(node.leftChild);
-            this.splitTreeLevel(node.rightChild);
+        const leftChild = node.getLeftChild();
+        const rightChild = node.getRightChild();
+
+        // nos aseguramos que ninguno de sus hijos sea undefined
+        if (didSplit && leftChild && rightChild) {
+            this.splitTreeLevel(leftChild);
+            this.splitTreeLevel(rightChild);
         }
     }
 
     // Método encargado de dividir un nodo especifico.
     private splitNode(node: BSPNode): boolean {
-        if (node.leftChild || node.rightChild) return false; // Ya está dividido
+        if (node.getLeftChild() || node.getRightChild()) return false; // Ya está dividido
 
 
         /*
@@ -42,8 +46,8 @@ export class BSPTree {
         si el nodo es demasiado ancho o demasiado alto, en cuyo caso se fuerza el corte a ser vertical u horizontal respectivamente.
         */
         let isSplitHorizontal = Math.random() >= 0.5;
-        if (node.width / node.height >= 1.25) isSplitHorizontal = false; // Forzar corte vertical
-        else if (node.height / node.width >= 1.25) isSplitHorizontal = true; // Forzar corte horizontal
+        if (node.getWidth() / node.getHeight() >= 1.25) isSplitHorizontal = false; // Forzar corte vertical
+        else if (node.getHeight() / node.getWidth() >= 1.25) isSplitHorizontal = true; // Forzar corte horizontal
 
         /*
         Luego tiene que determinar en que parte del nodo se hará el corte, esto teniendo en cuenta que donde se haga el corte ambos nodos resultantes
@@ -64,7 +68,7 @@ export class BSPTree {
         con esto podemos ver que si hicieramos el corte en la posición max la cual es 80, el nodo izquierdo tendría un ancho de 80 y el nodo derecho tendría un ancho de 20
         por lo que ambos nodos cumples con el tamaño minimo.
         */
-        const max = (isSplitHorizontal ? node.height : node.width) - this.pieceMinSize;
+        const max = (isSplitHorizontal ? node.getHeight() : node.getWidth()) - this.pieceMinSize;
         if (max <= this.pieceMinSize) return false; // Demasiado pequeño para dividir
 
         /*
@@ -82,43 +86,50 @@ export class BSPTree {
             es el mismo del de su padre pero su altura es la altura del padre menos la posicion en donde se hace el corte.
             */
 
-            node.leftChild = new BSPNode(node.x, node.y, node.width, splitPosition);
-            node.rightChild = new BSPNode(node.x, node.y + splitPosition, node.width, node.height - splitPosition);
+            node.setLeftChild(new BSPNode(node.getPositionInX(), node.getPositionInY(), node.getWidth(), splitPosition));
+            node.setRightChild(new BSPNode(node.getPositionInX(), node.getPositionInY() + splitPosition, node.getWidth(), node.getHeight() - splitPosition));
         } else { // Corte Vertical
-            node.leftChild = new BSPNode(node.x, node.y, splitPosition, node.height);
-            node.rightChild = new BSPNode(node.x + splitPosition, node.y, node.width - splitPosition, node.height);
+            node.setLeftChild(new BSPNode(node.getPositionInX(), node.getPositionInY(), splitPosition, node.getHeight()));
+            node.setRightChild(new BSPNode(node.getPositionInX() + splitPosition, node.getPositionInY(), node.getWidth() - splitPosition, node.getHeight()));
         }
 
         return true;
     }
 
     public printTree(node: BSPNode = this.root, indent: string = "", isLeft: boolean = true): void {
-        const isLeaf = !node.leftChild && !node.rightChild; // Revisa si es que los hijos son nulos y si lo son significa que el nodo es una hoja
+        const isLeaf = !node.getLeftChild() && !node.getRightChild(); // Revisa si es que los hijos son nulos y si lo son significa que el nodo es una hoja
         const typeNodeLabel = isLeaf ? "[HOJA]" : "[NODO]";
 
         console.log(
             `${indent}${isLeft ? "├──" : "└──"}${typeNodeLabel} ` +
-            `Pos: (${node.x}, ${node.y}) | Tam: ${node.width}x${node.height}`
+            `Pos: (${node.getPositionInX()}, ${node.getPositionInY()}) | Tam: ${node.getWidth()}x${node.getHeight()}`
         );
 
         const newIndent = indent + (isLeft ? "│   " : "    ");
 
-        if (node.leftChild) {
-            this.printTree(node.leftChild, newIndent, true);
+        const leftChild = node.getLeftChild();
+        const rightChild = node.getRightChild();
+        if (leftChild) {
+            this.printTree(leftChild, newIndent, true);
         }
-        if (node.rightChild) {
-            this.printTree(node.rightChild, newIndent, false);
+        if (rightChild) {
+            this.printTree(rightChild, newIndent, false);
         }
     }
 
     public getLeaves(node: BSPNode = this.root): BSPNode[] {
-        if (!node.leftChild && !node.rightChild) {
+
+        // Si no tiene hijos significa que es una por lo que se devuelve para sumarse dentro del array que luego se retornará
+        if (!node.getLeftChild() && !node.getRightChild()) {
             return [node];
         }
-
+        
+        // Hace la busqueda recursiva por cada rama que tenga el arbol para meter las hojas en la lista y luego devolver la misma
         const leaves: BSPNode[] = [];
-        if (node.leftChild) leaves.push(...this.getLeaves(node.leftChild));
-        if (node.rightChild) leaves.push(...this.getLeaves(node.rightChild));
+        const leftChild = node.getLeftChild();
+        const rightChild = node.getRightChild();
+        if (leftChild) leaves.push(...this.getLeaves(leftChild));
+        if (rightChild) leaves.push(...this.getLeaves(rightChild));
 
         return leaves;
     }
