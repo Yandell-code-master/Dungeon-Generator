@@ -1,5 +1,14 @@
 import { BSPNode } from "./BSPNode";
 
+/*
+Esta es la clase que crea la forma en que se divide la dungeon.
+
+Funciona de manera recursiva, dividiendo el mapa en dos partes hasta que ya los espacios sean demasiado pequeños para dividirse (son demasiados pequeños cuando
+son más pequeños que 'minSize').
+
+Cada división es un nodo, esto es un arbol binario, osea que cada nodo tiene dos hijos.
+*/
+
 export class BSPTree {
     private root: BSPNode;
     private pieceMinSize: number; // Se refiere a celdas de 32 pixeles

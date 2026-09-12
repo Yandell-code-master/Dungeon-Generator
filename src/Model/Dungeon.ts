@@ -22,9 +22,6 @@ export class Dungeon {
                                 [new FloorTile(), new FloorTile(), new FloorTile(), new FloorTile(), new FloorTile()]];
     }
 
-    public CreateDungeon(): void {
-        // Aqui se implementaria la logica para crear un dungeon dinamico
-    }
 
     
 }

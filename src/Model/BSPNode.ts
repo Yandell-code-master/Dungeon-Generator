@@ -1,26 +1,22 @@
-/*
-Esta es la clase que crea la forma en que se divide la dungeon.
 
-Funciona de manera recursiva, dividiendo el mapa en dos partes hasta que ya los espacios sean demasiado pequeños para dividirse (son demasiados pequeños cuando
-son más pequeños que 'minSize').
-
-Cada división es un nodo, esto es un arbol binario, osea que cada nodo tiene dos hijos.
-*/
 import { Room } from "./Room.ts";
 
 export class BSPNode {
 
     // Coordenadas las cuales nos dicen en donde comienza a dibujarse el espacio que tiene el nodo. Recordar que esto es la ezquina superior izquierda del nodo.
+    // Es importante tener en cuenta que las coordenadas tambien se maneja en celdas de 32 pixeles
     private positionInX: number;
     private positionInY: number;
 
     /*Este tamaño se refiere a celdas que cada celda es de 32 piexeles.*/
     private width: number;
     private height: number;
+
     private leftChild?: BSPNode = undefined;
     private rightChild?: BSPNode = undefined;
 
-    private room?: Room = undefined; // este es la referencia hacia la habitación que va a ser construida dentro de este nodo
+    // este es la referencia hacia la habitación que va a ser construida dentro de este nodo
+    private room?: Room = undefined; 
 
 
     constructor(positionInX: number, positionInY: number, width: number, height: number) {

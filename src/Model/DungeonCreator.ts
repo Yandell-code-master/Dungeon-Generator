@@ -1,7 +1,10 @@
 /*Esta es la clase encargada de crear la dungeon, debe hacer todos los precesos para al final terminar devolviendo un objeto de tipo Dungeon con su respectiva matriz de celdas*/
 
+import type { BSPNode } from "./BSPNode";
 import { BSPTree } from "./BSPTree";
 import { Room } from "./Room";
+import type { Point } from "./Point"
+import { Corridor } from "./Corridor";
 
 export class DungeonCreator {
     private bSPTree: BSPTree;
@@ -10,9 +13,8 @@ export class DungeonCreator {
         this.bSPTree = bSPTree;
     }
 
-    public CreateRooms(): void {
-        const leaves = this.bSPTree.getLeaves();
-        
+    public CreateRoomsInLeaves(leaves: BSPNode[]): void {
+
         for (const leaf of leaves) {
             /* 
             Obtenemos un valores de ancho y alto minimos los cuales pueden ser tanto la mitad de lo que tiene la leaf o tres, en este caso estamos hablando de celdas
@@ -41,6 +43,64 @@ export class DungeonCreator {
 
             leaf.setRoom(new Room(roomPositionX, roomPositionY, roomWidth, roomHeight));
         }
+    }
 
+    private connectRooms() {
+
+    }
+
+    private getRoomsFromBSPTree() {
+        const leaves = this.bSPTree.getLeaves();
+        const rooms: Room[] = [];
+
+        for (const leave of leaves) {
+            const room = leave.getRoom();
+
+            // Contemplamos que la room no sea undefined antes de poder hacer push 
+            // Aunque no puede ser undefined pero el compilador nos lo pide igual
+            if (room) {
+                rooms.push(room);
+            }
+        }
+    }
+
+    private setCenterPointsRooms(rooms: Room[]) {
+
+        for (const room of rooms) {
+
+            /*Dividimos el ancho de la room a la mitad y le sumamos la posicion en donde se comienza a dibujar 
+            la habitacion asi obtenemos en la coordenada x en donde esta el centro de la habitación */
+            room.setPositionInXRoomCenter(room.getPositionInX() + (room.getWidth() / 2));
+
+
+            room.setPositionInYRoomCenter(room.getPositionInY() + (room.getHeight() / 2));
+        }
+    }
+
+    private createCorridors(pairsRoomsToUnite: Room[][]): Corridor[] {
+        let corner: Point;
+        const corridors : Corridor[] = [];
+
+
+        for (const pairRoomsToUnite of pairsRoomsToUnite) {
+            const roomStart : Room = pairRoomsToUnite[0];
+            const roomEnd : Room = pairRoomsToUnite[1];
+
+            // Tiramos una moneda para decidir si el primer tramo es Horizontal o Vertical
+            if (Math.random() < 0.5) {
+                // Ruta 1: Moverse horizontalmente primero, luego verticalmente
+                // La esquina comparte la X del destino (centerB) y la Y del origen (centerA)
+                corner = { x: roomEnd.getPositionInXRoomCenter(), y: roomStart.getPositionInYRoomCenter() };
+            } else {
+                // Ruta 2: Moverse verticalmente primero, luego horizontalmente
+                // La esquina comparte la X del origen (centerA) y la Y del destino (centerB)
+                corner = { x: roomStart.getPositionInXRoomCenter(), y: roomEnd.getPositionInYRoomCenter() };
+            }
+
+            corridors.push(new Corridor({x: roomStart.getPositionInXRoomCenter(), y: roomStart.getPositionInYRoomCenter()}, corner, {x : roomEnd.getPositionInXRoomCenter(), y: roomEnd.getPositionInYRoomCenter()}));
+
+        }
+
+        return corridors;
     }
 }
