@@ -45,6 +45,51 @@ export class DungeonCreator {
         }
     }
 
+    private getListsRoomsToUnite(): Room[][] {
+
+    }
+
+    private cambiar(leftNode: BSPNode, rigthNode: BSPNode, father: BSPNode, listsRoomsToUnite: Room[][] = [][]) {
+        const roomsPair: Room[] = []
+        
+        if (leftNode.getLeftChild() && leftNode.getRightChild()) {
+            const leftChild = leftNode.getLeftChild();
+            const rigthChild = leftNode.getRightChild();
+
+            if (leftChild && rigthChild) {
+                this.cambiar(leftChild, leftNode, rigthChild, listsRoomsToUnite);
+            }
+
+
+        } else {
+
+            // Comprobación de que la habitacion no sea undifined
+            const room = leftNode.getRoom();
+            if (room) {
+                roomsPair.push(room);
+            }
+        }
+
+        if (rigthNode.getLeftChild() && rigthNode.getRightChild()) {
+            const leftChild = rigthNode.getLeftChild();
+            const rigthChild = leftNode.getRightChild();
+
+            if (leftChild && rigthChild) {
+                this.cambiar(leftChild, rigthChild, rigthChild, listsRoomsToUnite);
+            }
+
+
+        } else {
+
+            const room = rigthNode.getRoom();
+
+            if (room) {
+                roomsPair.push(room)
+            }
+        }
+
+    }
+
     private connectRooms() {
 
     }
@@ -79,12 +124,12 @@ export class DungeonCreator {
 
     private createCorridors(pairsRoomsToUnite: Room[][]): Corridor[] {
         let corner: Point;
-        const corridors : Corridor[] = [];
+        const corridors: Corridor[] = [];
 
 
         for (const pairRoomsToUnite of pairsRoomsToUnite) {
-            const roomStart : Room = pairRoomsToUnite[0];
-            const roomEnd : Room = pairRoomsToUnite[1];
+            const roomStart: Room = pairRoomsToUnite[0];
+            const roomEnd: Room = pairRoomsToUnite[1];
 
             // Tiramos una moneda para decidir si el primer tramo es Horizontal o Vertical
             if (Math.random() < 0.5) {
@@ -97,7 +142,7 @@ export class DungeonCreator {
                 corner = { x: roomStart.getPositionInXRoomCenter(), y: roomEnd.getPositionInYRoomCenter() };
             }
 
-            corridors.push(new Corridor({x: roomStart.getPositionInXRoomCenter(), y: roomStart.getPositionInYRoomCenter()}, corner, {x : roomEnd.getPositionInXRoomCenter(), y: roomEnd.getPositionInYRoomCenter()}));
+            corridors.push(new Corridor({ x: roomStart.getPositionInXRoomCenter(), y: roomStart.getPositionInYRoomCenter() }, corner, { x: roomEnd.getPositionInXRoomCenter(), y: roomEnd.getPositionInYRoomCenter() }));
 
         }
 
