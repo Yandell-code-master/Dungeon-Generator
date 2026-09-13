@@ -49,44 +49,110 @@ export class DungeonCreator {
 
     }
 
-    private cambiar(leftNode: BSPNode, rigthNode: BSPNode, father: BSPNode, listsRoomsToUnite: Room[][] = [][]) {
-        const roomsPair: Room[] = []
-        
-        if (leftNode.getLeftChild() && leftNode.getRightChild()) {
-            const leftChild = leftNode.getLeftChild();
-            const rigthChild = leftNode.getRightChild();
+    private isLeave(node: BSPNode): Boolean {
+        if (node.getLeftChild() && node.getRightChild()) {
+            return true;
+        }
+    }
 
-            if (leftChild && rigthChild) {
-                this.cambiar(leftChild, leftNode, rigthChild, listsRoomsToUnite);
+    private searchRepresentant(node: BSPNode, listsRoomsToUnite: Room[][] = []): BSPNode {
+        const leftChild: BSPNode = node.getLeftChild();
+        const rigthChild: BSPNode = node.getRightChild();
+
+        let leftCompetitor: BSPNode = leftChild;
+        let rigthCompetitor: BSPNode = rigthChild;
+        const roomsPair: Room[] = [];
+
+        if (this.isLeave(node)) {
+            return node;
+        }
+
+        if (leftChild && rigthChild) {
+            if (!this.isLeave(leftChild)) {
+                leftCompetitor = this.searchRepresentant(leftChild);
             }
 
-
-        } else {
-
-            // Comprobación de que la habitacion no sea undifined
-            const room = leftNode.getRoom();
-            if (room) {
-                roomsPair.push(room);
+            if (!this.isLeave(rigthChild)) {
+                rigthCompetitor = this.searchRepresentant(rigthChild);
             }
         }
 
-        if (rigthNode.getLeftChild() && rigthNode.getRightChild()) {
-            const leftChild = rigthNode.getLeftChild();
-            const rigthChild = leftNode.getRightChild();
-
-            if (leftChild && rigthChild) {
-                this.cambiar(leftChild, rigthChild, rigthChild, listsRoomsToUnite);
-            }
-
-
-        } else {
-
-            const room = rigthNode.getRoom();
-
-            if (room) {
-                roomsPair.push(room)
-            }
+        if (Math.random() <= 0.5) {
+            return leftCompetitor;
         }
+
+
+
+
+
+
+
+
+
+
+        // let nodeRepresentantRigthGroup: BSPNode = leftNode;
+        // let nodeRepresentantLeftGroup: BSPNode = rigthNode;
+        // const roomsPair: Room[] = [];
+
+
+
+
+        // if (leftNode.getLeftChild() && leftNode.getRightChild()) {
+        //     const leftChild = leftNode.getLeftChild();
+        //     const rigthChild = leftNode.getRightChild();
+
+        //     if (leftChild && rigthChild) {
+        //         nodeRepresentantLeftGroup = this.cambiar(leftChild, leftNode, rigthChild, listsRoomsToUnite)
+        //         const leftRoomRepresentant = nodeRepresentantLeftGroup.getRoom();
+
+        //         if (leftRoomRepresentant) {
+        //             this.cambiar(leftChild, leftNode, rigthChild, listsRoomsToUnite);
+        //         }
+        //     }
+
+
+        // } else {
+
+        //     // Comprobación de que la habitacion no sea undifined
+        //     const room = leftNode.getRoom();
+        //     if (room) {
+        //         roomsPair.push(room);
+        //     }
+        // }
+
+        // if (rigthNode.getLeftChild() && rigthNode.getRightChild()) {
+        //     const leftChild = rigthNode.getLeftChild();
+        //     const rigthChild = leftNode.getRightChild();
+
+        //     if (leftChild && rigthChild) {
+        //         nodeRepresentantRigthGroup = this.cambiar(leftChild, rigthNode, rigthChild, listsRoomsToUnite)
+        //         const roomFromNodeRigthRepresentant = nodeRepresentantLeftGroup.getRoom();
+
+        //         if (roomFromNodeRigthRepresentant) {
+        //             roomsPair.push(roomFromNodeRigthRepresentant);
+        //         }
+
+
+        //     }
+        // } else {
+
+        //     const room = rigthNode.getRoom();
+
+        //     if (room) {
+        //         roomsPair.push(room)
+        //     }
+        // }
+
+        // listsRoomsToUnite.push(roomsPair);
+
+        // if (Math.random() <= 0.5) {
+        //     return nodeRepresentantLeftGroup;
+        // }
+
+        // return nodeRepresentantRigthGroup;
+    }
+
+    private getRepresentantNode() {
 
     }
 
