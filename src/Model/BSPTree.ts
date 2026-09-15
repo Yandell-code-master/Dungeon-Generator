@@ -142,5 +142,9 @@ export class BSPTree {
 
         return leaves;
     }
+
+    public getRoot(): BSPNode {
+        return this.root;
+    }
 }
 

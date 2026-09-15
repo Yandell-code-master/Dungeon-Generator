@@ -1,6 +1,6 @@
 /*Esta es la clase encargada de crear la dungeon, debe hacer todos los precesos para al final terminar devolviendo un objeto de tipo Dungeon con su respectiva matriz de celdas*/
 
-import type { BSPNode } from "./BSPNode";
+import { BSPNode } from "./BSPNode";
 import { BSPTree } from "./BSPTree";
 import { Room } from "./Room";
 import type { Point } from "./Point"
@@ -13,7 +13,7 @@ export class DungeonCreator {
         this.bSPTree = bSPTree;
     }
 
-    public CreateRoomsInLeaves(leaves: BSPNode[]): void {
+    public createRoomsInLeaves(leaves: BSPNode[]): void {
 
         for (const leaf of leaves) {
             /* 
@@ -45,41 +45,32 @@ export class DungeonCreator {
         }
     }
 
-    private getListsRoomsToUnite(): Room[][] {
-
-    }
-
     private isLeave(node: BSPNode): Boolean {
-        if (node.getLeftChild() && node.getRightChild()) {
-            return true;
-        }
+        // Por lo que sabemos que si almenos uno de los hijos tiene algo adentro ambos hijos tendran también por lo que es un arbol binario, por lo que solamente es necesario revisar uno
+        return node.getLeftChild() ? false : true
     }
 
-    private searchRepresentant(node: BSPNode, listsRoomsToUnite: Room[][] = []): BSPNode {
-        const leftChild: BSPNode = node.getLeftChild();
-        const rigthChild: BSPNode = node.getRightChild();
+    private getRepresentants(node: BSPNode, listsOfRepresentants: BSPNode[][] = []): BSPNode {
+        const leftChild = node.getLeftChild();
+        const rigthChild = node.getRightChild();
 
-        let leftCompetitor: BSPNode = leftChild;
-        let rigthCompetitor: BSPNode = rigthChild;
-        const roomsPair: Room[] = [];
-
-        if (this.isLeave(node)) {
+        // Revisamos que sus hijos sean undefined, esto también es para que typscript nos deje despues poder usar estas variables como BSPNode
+        // En el caso de que sean undefined devolvemos el mismo nodo ya que el es el representante al ser una hoja
+        if (!leftChild || !rigthChild) {
             return node;
         }
 
-        if (leftChild && rigthChild) {
-            if (!this.isLeave(leftChild)) {
-                leftCompetitor = this.searchRepresentant(leftChild);
-            }
+        // Buscamos ambos competidores aqui en donde se aplica la recursividad
+        let leftCompetitor: BSPNode = this.getRepresentant(leftChild, listsOfRepresentants);
+        let rigthCompetitor: BSPNode = this.getRepresentant(rigthChild, listsOfRepresentants);
 
-            if (!this.isLeave(rigthChild)) {
-                rigthCompetitor = this.searchRepresentant(rigthChild);
-            }
-        }
+        listsOfRepresentants.push([leftCompetitor, rigthCompetitor])
 
         if (Math.random() <= 0.5) {
             return leftCompetitor;
         }
+
+        return rigthCompetitor;
 
 
 
