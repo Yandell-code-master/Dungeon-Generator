@@ -13,8 +13,8 @@ export class BSPTree {
     private root: BSPNode;
     private pieceMinSize: number; // Se refiere a celdas de 32 pixeles
 
-    constructor() {
-        this.root = new BSPNode(0, 0, 38, 25); // Se crea por predetermiado
+    constructor(initialWidthRoot: number, initialHeigthRoot: number) {
+        this.root = new BSPNode(0, 0, initialWidthRoot, initialHeigthRoot); // Se crea por predetermiado
         this.pieceMinSize = 6; // 6 Celdas y cada celda es 32 bits
     }
 

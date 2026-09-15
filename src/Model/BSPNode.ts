@@ -12,7 +12,7 @@ export class BSPNode {
     private width: number;
     private height: number;
 
-    private leftChild: BSPNode;
+    private leftChild?: BSPNode = undefined;
     private rightChild?: BSPNode = undefined;
 
     // este es la referencia hacia la habitación que va a ser construida dentro de este nodo
@@ -58,7 +58,7 @@ export class BSPNode {
         this.height = height;
     }
 
-    public getLeftChild(): BSPNode {
+    public getLeftChild(): BSPNode | undefined {
         return this.leftChild;
     }
 

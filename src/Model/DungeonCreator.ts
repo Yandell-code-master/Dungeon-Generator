@@ -5,12 +5,17 @@ import { BSPTree } from "./BSPTree";
 import { Room } from "./Room";
 import type { Point } from "./Point"
 import { Corridor } from "./Corridor";
+import { Dungeon } from "./Dungeon";
+import { WallTile } from "./WallTile";
+import { FloorTile } from "./FloorTile";
 
 export class DungeonCreator {
     private bSPTree: BSPTree;
+    private dungeon: Dungeon;
 
-    constructor(bSPTree: BSPTree = new BSPTree()) {
-        this.bSPTree = bSPTree;
+    constructor(width: number, heigth: number) {
+        this.dungeon = new Dungeon(width, heigth);
+        this.bSPTree = new BSPTree(this.dungeon.getWidth(), this.dungeon.getWidth());
     }
 
     public createRoomsInLeaves(leaves: BSPNode[]): void {
@@ -50,7 +55,8 @@ export class DungeonCreator {
         return node.getLeftChild() ? false : true
     }
 
-    private getRepresentants(node: BSPNode, listsOfRepresentants: BSPNode[][] = []): BSPNode {
+    /*Lo que hace esta función no solamente devuelve el representantes de un grupo, sino que mientras los va encontrando los a guardando en una lista, cada representante es un par en una lista*/
+    private getAndSaveRepresentants(node: BSPNode, listsOfRepresentants: BSPNode[][] = []): BSPNode {
         const leftChild = node.getLeftChild();
         const rigthChild = node.getRightChild();
 
@@ -61,8 +67,8 @@ export class DungeonCreator {
         }
 
         // Buscamos ambos competidores aqui en donde se aplica la recursividad
-        let leftCompetitor: BSPNode = this.getRepresentant(leftChild, listsOfRepresentants);
-        let rigthCompetitor: BSPNode = this.getRepresentant(rigthChild, listsOfRepresentants);
+        let leftCompetitor: BSPNode = this.getAndSaveRepresentants(leftChild, listsOfRepresentants);
+        let rigthCompetitor: BSPNode = this.getAndSaveRepresentants(rigthChild, listsOfRepresentants);
 
         listsOfRepresentants.push([leftCompetitor, rigthCompetitor])
 
@@ -71,87 +77,9 @@ export class DungeonCreator {
         }
 
         return rigthCompetitor;
-
-
-
-
-
-
-
-
-
-
-        // let nodeRepresentantRigthGroup: BSPNode = leftNode;
-        // let nodeRepresentantLeftGroup: BSPNode = rigthNode;
-        // const roomsPair: Room[] = [];
-
-
-
-
-        // if (leftNode.getLeftChild() && leftNode.getRightChild()) {
-        //     const leftChild = leftNode.getLeftChild();
-        //     const rigthChild = leftNode.getRightChild();
-
-        //     if (leftChild && rigthChild) {
-        //         nodeRepresentantLeftGroup = this.cambiar(leftChild, leftNode, rigthChild, listsRoomsToUnite)
-        //         const leftRoomRepresentant = nodeRepresentantLeftGroup.getRoom();
-
-        //         if (leftRoomRepresentant) {
-        //             this.cambiar(leftChild, leftNode, rigthChild, listsRoomsToUnite);
-        //         }
-        //     }
-
-
-        // } else {
-
-        //     // Comprobación de que la habitacion no sea undifined
-        //     const room = leftNode.getRoom();
-        //     if (room) {
-        //         roomsPair.push(room);
-        //     }
-        // }
-
-        // if (rigthNode.getLeftChild() && rigthNode.getRightChild()) {
-        //     const leftChild = rigthNode.getLeftChild();
-        //     const rigthChild = leftNode.getRightChild();
-
-        //     if (leftChild && rigthChild) {
-        //         nodeRepresentantRigthGroup = this.cambiar(leftChild, rigthNode, rigthChild, listsRoomsToUnite)
-        //         const roomFromNodeRigthRepresentant = nodeRepresentantLeftGroup.getRoom();
-
-        //         if (roomFromNodeRigthRepresentant) {
-        //             roomsPair.push(roomFromNodeRigthRepresentant);
-        //         }
-
-
-        //     }
-        // } else {
-
-        //     const room = rigthNode.getRoom();
-
-        //     if (room) {
-        //         roomsPair.push(room)
-        //     }
-        // }
-
-        // listsRoomsToUnite.push(roomsPair);
-
-        // if (Math.random() <= 0.5) {
-        //     return nodeRepresentantLeftGroup;
-        // }
-
-        // return nodeRepresentantRigthGroup;
     }
 
-    private getRepresentantNode() {
-
-    }
-
-    private connectRooms() {
-
-    }
-
-    private getRoomsFromBSPTree() {
+    private getRoomsFromBSPTree(): Room[] {
         const leaves = this.bSPTree.getLeaves();
         const rooms: Room[] = [];
 
@@ -164,6 +92,8 @@ export class DungeonCreator {
                 rooms.push(room);
             }
         }
+
+        return rooms;
     }
 
     private setCenterPointsRooms(rooms: Room[]) {
@@ -179,7 +109,7 @@ export class DungeonCreator {
         }
     }
 
-    private createCorridors(pairsRoomsToUnite: Room[][]): Corridor[] {
+    private createCorridors(pairsRoomsToUnite: Room[][]){
         let corner: Point;
         const corridors: Corridor[] = [];
 
@@ -203,6 +133,46 @@ export class DungeonCreator {
 
         }
 
-        return corridors;
+        this.dungeon.setCorridors(corridors); 
+    }
+
+    private createMatrixDungeon() {
+
+    }
+
+    private buildRoomsInMatrixTiles() {
+        const rooms: Room[] = this.getRoomsFromBSPTree();
+        const matrixTileType = this.dungeon.getMatrixTiles();
+
+        for (const room of rooms) {
+
+            /* La variable de este bucle va a iniciar en donde incia la habitacion en x, y continuará mientras que la variable sea
+            menor a donde comienza en x mas el ancho, haciendo así que se repita la cantidad de celdas que necesita en ancho */
+            for (let x = room.getPositionInX(); x < room.getPositionInX() + room.getWidth(); x++) {
+
+                for (let y = room.getPositionInY(); y < room.getPositionInY() + room.getHeight(); y++) {
+                    matrixTileType[y][x] = new FloorTile();
+                }
+            }
+        }
+    }
+
+    private buildCorridorInMatrixTiles() {
+        const corridors = this.dungeon.getCorridors();
+
+        for (const corridor of corridors) {
+            for (let x: number = corridor.getStart().) {
+
+            }
+        }
+    }
+
+    private fillMatrixWithWalls() {
+        let matrixTileType = this.dungeon.getMatrixTiles();
+
+        //Llenamos cada fila de la matriz con la cantidad respectivas de celdas de tipo wall
+        matrixTileType = matrixTileType.map(() => Array(this.dungeon.getWidth()).fill(new WallTile()))
+
+        this.dungeon.setMatrixTiles(matrixTileType);
     }
 }
