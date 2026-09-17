@@ -160,14 +160,57 @@ export class DungeonCreator {
     private buildCorridorInMatrixTiles() {
         const corridors = this.dungeon.getCorridors();
         let matrixTiles = this.dungeon.getMatrixTiles();
+        let addQuantityInX = 0;
+        let addQuantityInY = 0;
 
         for (const corridor of corridors) {
+
+
+            // Decidimos hacia donde va el corredor dependiendo de donde esta posicionada cada habtiacion, si la habitacion final esta hacia la derecha entonces hay que sumar en x y si está hacia la izquierda hay que restar en x
+            if (corridor.getStart().getPositionInX() < corridor.getEnd().getPositionInX()) {
+                addQuantityInX = 1;
+            } else {
+                addQuantityInX = -1;
+            }
+
+            if (corridor.getStart().getPositionInY() < corridor.getEnd().getPositionInY()) {
+                addQuantityInY = 1;
+            } else {
+                addQuantityInY = -1;
+            }
+
             let positionInX: number = corridor.getStart().getPositionInX();
             let positionInY: number = corridor.getStart().getPositionInY();
 
-            for (; positionInX <= corridor.getCorner().getPositionInX(); positionInX++) {
-                for (; positionInY <= corridor.getStart().getPositionInY(); positionInY++) {
-                    matrixTiles[positionInY][positionInX];
+            let distanceToMoveInX: number;
+            let distanceToMoveInY: number;
+
+            // Revisamos si el movimiento es primero horizontal o es primero vertical
+            if (corridor.getCorner().getPositionInY() == corridor.getStart().getPositionInY()) {
+                distanceToMoveInX = Math.abs(positionInX - corridor.getCorner().getPositionInX());
+                distanceToMoveInY = Math.abs(positionInY - corridor.getEnd().getPositionInY());
+
+                for (; positionInX <= distanceToMoveInX; positionInX += addQuantityInX) {
+                    matrixTiles[positionInY][positionInX] = new FloorTile();
+                }
+
+                positionInX -= 1;
+
+                for (; positionInY <= distanceToMoveInY; positionInY += addQuantityInY) {
+                    matrixTiles[positionInY][positionInX] = new FloorTile();
+                }
+            } else {
+                distanceToMoveInY = Math.abs(positionInY - corridor.getCorner().getPositionInY());
+                distanceToMoveInX = Math.abs(positionInX - corridor.getEnd().getPositionInX());
+
+                for (; positionInY <= corridor.getCorner().getPositionInY(); positionInY += addQuantityInY) {
+                    matrixTiles[positionInY][positionInX] = new FloorTile();
+                }
+
+                positionInY -= 1
+
+                for (; positionInX <= corridor.getEnd().getPositionInX(); positionInX += addQuantityInX) {
+                    matrixTiles[positionInY][positionInX] = new FloorTile();
                 }
             }
         }
