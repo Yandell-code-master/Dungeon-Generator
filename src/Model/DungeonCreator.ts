@@ -3,7 +3,7 @@
 import { BSPNode } from "./BSPNode";
 import { BSPTree } from "./BSPTree";
 import { Room } from "./Room";
-import type { Point } from "./Point"
+import { Point } from "./Point"
 import { Corridor } from "./Corridor";
 import { Dungeon } from "./Dungeon";
 import { WallTile } from "./WallTile";
@@ -109,8 +109,8 @@ export class DungeonCreator {
         }
     }
 
-    private createCorridors(pairsRoomsToUnite: Room[][]){
-        let corner: Point;
+    private createCorridors(pairsRoomsToUnite: Room[][]) {
+        let cornerPoint: Point;
         const corridors: Corridor[] = [];
 
 
@@ -122,18 +122,18 @@ export class DungeonCreator {
             if (Math.random() < 0.5) {
                 // Ruta 1: Moverse horizontalmente primero, luego verticalmente
                 // La esquina comparte la X del destino (centerB) y la Y del origen (centerA)
-                corner = { x: roomEnd.getPositionInXRoomCenter(), y: roomStart.getPositionInYRoomCenter() };
+                cornerPoint = new Point(roomEnd.getPositionInXRoomCenter(), roomStart.getPositionInYRoomCenter())
             } else {
                 // Ruta 2: Moverse verticalmente primero, luego horizontalmente
                 // La esquina comparte la X del origen (centerA) y la Y del destino (centerB)
-                corner = { x: roomStart.getPositionInXRoomCenter(), y: roomEnd.getPositionInYRoomCenter() };
+
+                cornerPoint = new Point(roomStart.getPositionInXRoomCenter(), roomEnd.getPositionInYRoomCenter())
             }
 
-            corridors.push(new Corridor({ x: roomStart.getPositionInXRoomCenter(), y: roomStart.getPositionInYRoomCenter() }, corner, { x: roomEnd.getPositionInXRoomCenter(), y: roomEnd.getPositionInYRoomCenter() }));
-
+            corridors.push(new Corridor(new Point(roomStart.getPositionInXRoomCenter(), roomStart.getPositionInYRoomCenter()), cornerPoint, new Point(roomEnd.getPositionInXRoomCenter(), roomEnd.getPositionInYRoomCenter())));
         }
 
-        this.dungeon.setCorridors(corridors); 
+        this.dungeon.setCorridors(corridors);
     }
 
     private createMatrixDungeon() {
@@ -159,10 +159,16 @@ export class DungeonCreator {
 
     private buildCorridorInMatrixTiles() {
         const corridors = this.dungeon.getCorridors();
+        let matrixTiles = this.dungeon.getMatrixTiles();
 
         for (const corridor of corridors) {
-            for (let x: number = corridor.getStart().) {
+            let positionInX: number = corridor.getStart().getPositionInX();
+            let positionInY: number = corridor.getStart().getPositionInY();
 
+            for (; positionInX <= corridor.getCorner().getPositionInX(); positionInX++) {
+                for (; positionInY <= corridor.getStart().getPositionInY(); positionInY++) {
+                    matrixTiles[positionInY][positionInX];
+                }
             }
         }
     }
