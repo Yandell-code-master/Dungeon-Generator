@@ -15,10 +15,46 @@ export class DungeonCreator {
 
     constructor(width: number, heigth: number) {
         this.dungeon = new Dungeon(width, heigth);
-        this.bSPTree = new BSPTree(this.dungeon.getWidth(), this.dungeon.getWidth());
+        this.bSPTree = new BSPTree(this.dungeon.getWidth(), this.dungeon.getHeigth());
     }
 
-    public createRoomsInLeaves(leaves: BSPNode[]): void {
+    public createDungeon() {
+        this.bSPTree.startTreeCreation();
+
+        const bSPTreeLeaves: BSPNode[] = this.bSPTree.getLeaves();
+        this.createRoomsInLeaves(bSPTreeLeaves);
+
+        const rooms: Room[] = this.getRoomsFromBSPTree();
+        this.setCenterPointsRooms(rooms);
+
+        const representantsToUnite: BSPNode[][] = [];
+        this.getAndSaveRepresentants(this.bSPTree.getRoot(), representantsToUnite);
+
+        const roomsToUnite: Room[][] = [];
+
+        for (let row: number = 0; row < representantsToUnite.length; row++) {
+            for (let column: number = 0; column < representantsToUnite[0].length; column++) {
+                const room = representantsToUnite[row][column].getRoom();
+
+                if (!room) {
+                    return;
+                }
+
+                roomsToUnite[row][column] = room;
+            }
+        }
+
+        this.createCorridors(roomsToUnite);
+        
+
+
+        this.fillMatrixWithWalls();
+        this.buildRoomsInMatrixTiles();
+
+
+    }
+
+    private createRoomsInLeaves(leaves: BSPNode[]): void {
 
         for (const leaf of leaves) {
             /* 
@@ -136,10 +172,6 @@ export class DungeonCreator {
         this.dungeon.setCorridors(corridors);
     }
 
-    private createMatrixDungeon() {
-
-    }
-
     private buildRoomsInMatrixTiles() {
         const rooms: Room[] = this.getRoomsFromBSPTree();
         const matrixTileType = this.dungeon.getMatrixTiles();
@@ -160,58 +192,59 @@ export class DungeonCreator {
     private buildCorridorInMatrixTiles() {
         const corridors = this.dungeon.getCorridors();
         let matrixTiles = this.dungeon.getMatrixTiles();
-        let addQuantityInX = 0;
-        let addQuantityInY = 0;
 
         for (const corridor of corridors) {
 
+            for (const corridor of corridors) {
+                const start = corridor.getStart();
+                const corner = corridor.getCorner();
+                const end = corridor.getEnd();
 
-            // Decidimos hacia donde va el corredor dependiendo de donde esta posicionada cada habtiacion, si la habitacion final esta hacia la derecha entonces hay que sumar en x y si está hacia la izquierda hay que restar en x
-            if (corridor.getStart().getPositionInX() < corridor.getEnd().getPositionInX()) {
-                addQuantityInX = 1;
-            } else {
-                addQuantityInX = -1;
-            }
+                // 1. Tramo desde Start hasta Corner
+                const minX1 = Math.min(start.getPositionInX(), corner.getPositionInX());
+                const maxX1 = Math.max(start.getPositionInX(), corner.getPositionInX());
+                const minY1 = Math.min(start.getPositionInY(), corner.getPositionInY());
+                const maxY1 = Math.max(start.getPositionInY(), corner.getPositionInY());
 
-            if (corridor.getStart().getPositionInY() < corridor.getEnd().getPositionInY()) {
-                addQuantityInY = 1;
-            } else {
-                addQuantityInY = -1;
-            }
-
-            let positionInX: number = corridor.getStart().getPositionInX();
-            let positionInY: number = corridor.getStart().getPositionInY();
-
-            let distanceToMoveInX: number;
-            let distanceToMoveInY: number;
-
-            // Revisamos si el movimiento es primero horizontal o es primero vertical
-            if (corridor.getCorner().getPositionInY() == corridor.getStart().getPositionInY()) {
-                distanceToMoveInX = Math.abs(positionInX - corridor.getCorner().getPositionInX());
-                distanceToMoveInY = Math.abs(positionInY - corridor.getEnd().getPositionInY());
-
-                for (; positionInX <= distanceToMoveInX; positionInX += addQuantityInX) {
-                    matrixTiles[positionInY][positionInX] = new FloorTile();
+                for (let y = minY1; y <= maxY1; y++) {
+                    for (let x = minX1; x <= maxX1; x++) {
+                        matrixTiles[y][x] = new FloorTile();
+                    }
                 }
 
-                positionInX -= 1;
+                // 2. Tramo desde Corner hasta End
+                const minX2 = Math.min(corner.getPositionInX(), end.getPositionInX());
+                const maxX2 = Math.max(corner.getPositionInX(), end.getPositionInX());
+                const minY2 = Math.min(corner.getPositionInY(), end.getPositionInY());
+                const maxY2 = Math.max(corner.getPositionInY(), end.getPositionInY());
 
-                for (; positionInY <= distanceToMoveInY; positionInY += addQuantityInY) {
-                    matrixTiles[positionInY][positionInX] = new FloorTile();
+                for (let y = minY2; y <= maxY2; y++) {
+                    for (let x = minX2; x <= maxX2; x++) {
+                        matrixTiles[y][x] = new FloorTile();
+                    }
                 }
-            } else {
-                distanceToMoveInY = Math.abs(positionInY - corridor.getCorner().getPositionInY());
-                distanceToMoveInX = Math.abs(positionInX - corridor.getEnd().getPositionInX());
 
-                for (; positionInY <= corridor.getCorner().getPositionInY(); positionInY += addQuantityInY) {
-                    matrixTiles[positionInY][positionInX] = new FloorTile();
-                }
 
-                positionInY -= 1
+                // // Revisamos si el movimiento es primero horizontal o es primero vertical
+                // if (corridor.getCorner().getPositionInY() == corridor.getStart().getPositionInY()) {
 
-                for (; positionInX <= corridor.getEnd().getPositionInX(); positionInX += addQuantityInX) {
-                    matrixTiles[positionInY][positionInX] = new FloorTile();
-                }
+                //     for (let positionInX: number = minPositionInX; positionInX <= maxPositionInX; positionInX++) {
+                //         matrixTiles[corridor.getStart().getPositionInY()][positionInX] = new FloorTile();
+                //     }
+
+                //     for (let positionInY: number = minPositionInY; positionInY <= maxPositionInY; positionInY++) {
+                //         matrixTiles[positionInY][corridor.getEnd().getPositionInX()] = new FloorTile();
+                //     }
+                // } else {
+
+                //     for (let positionInY = minPositionInY; positionInY <= maxPositionInY; positionInY++) {
+                //         matrixTiles[positionInY][corridor.getStart().getPositionInX()] = new FloorTile();
+                //     }
+
+                //     for (let positionInX: number = minPositionInX; positionInX <= maxPositionInX; positionInX++) {
+                //         matrixTiles[corridor.getEnd().getPositionInY()][positionInX] = new FloorTile();
+                //     }
+                // }
             }
         }
     }
@@ -223,5 +256,9 @@ export class DungeonCreator {
         matrixTileType = matrixTileType.map(() => Array(this.dungeon.getWidth()).fill(new WallTile()))
 
         this.dungeon.setMatrixTiles(matrixTileType);
+    }
+
+    public getDungeon(): Dungeon {
+        return this.dungeon;
     }
 }
