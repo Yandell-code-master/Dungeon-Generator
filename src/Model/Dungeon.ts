@@ -1,7 +1,4 @@
 import { Tile } from './Tile';
-import { FloorTile } from './FloorTile';
-import { WallTile } from './WallTile';
-import { OutTheDungeonTile } from './OutTheDungeonTile';
 import type { Corridor } from './Corridor';
 
 // Esta es la clase que tiene la matriz 

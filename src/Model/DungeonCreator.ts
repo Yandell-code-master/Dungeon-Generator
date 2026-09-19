@@ -32,26 +32,20 @@ export class DungeonCreator {
 
         const roomsToUnite: Room[][] = [];
 
-        for (let row: number = 0; row < representantsToUnite.length; row++) {
-            for (let column: number = 0; column < representantsToUnite[0].length; column++) {
-                const room = representantsToUnite[row][column].getRoom();
+        for (const pair of representantsToUnite) {
+            const leftRoom = pair[0].getRoom();
+            const rigthRoom = pair[1].getRoom();
 
-                if (!room) {
-                    return;
-                }
-
-                roomsToUnite[row][column] = room;
+            if (leftRoom && rigthRoom) {
+                roomsToUnite.push([leftRoom, rigthRoom]);
             }
         }
 
         this.createCorridors(roomsToUnite);
-        
-
 
         this.fillMatrixWithWalls();
         this.buildRoomsInMatrixTiles();
-
-
+        this.buildCorridorInMatrixTiles();
     }
 
     private createRoomsInLeaves(leaves: BSPNode[]): void {
@@ -193,58 +187,34 @@ export class DungeonCreator {
         const corridors = this.dungeon.getCorridors();
         let matrixTiles = this.dungeon.getMatrixTiles();
 
+
         for (const corridor of corridors) {
+            const start = corridor.getStart();
+            const corner = corridor.getCorner();
+            const end = corridor.getEnd();
 
-            for (const corridor of corridors) {
-                const start = corridor.getStart();
-                const corner = corridor.getCorner();
-                const end = corridor.getEnd();
+            // 1. Tramo desde Start hasta Corner
+            const minX1 = Math.min(start.getPositionInX(), corner.getPositionInX());
+            const maxX1 = Math.max(start.getPositionInX(), corner.getPositionInX());
+            const minY1 = Math.min(start.getPositionInY(), corner.getPositionInY());
+            const maxY1 = Math.max(start.getPositionInY(), corner.getPositionInY());
 
-                // 1. Tramo desde Start hasta Corner
-                const minX1 = Math.min(start.getPositionInX(), corner.getPositionInX());
-                const maxX1 = Math.max(start.getPositionInX(), corner.getPositionInX());
-                const minY1 = Math.min(start.getPositionInY(), corner.getPositionInY());
-                const maxY1 = Math.max(start.getPositionInY(), corner.getPositionInY());
-
-                for (let y = minY1; y <= maxY1; y++) {
-                    for (let x = minX1; x <= maxX1; x++) {
-                        matrixTiles[y][x] = new FloorTile();
-                    }
+            for (let y = minY1; y <= maxY1; y++) {
+                for (let x = minX1; x <= maxX1; x++) {
+                    matrixTiles[y][x] = new FloorTile();
                 }
+            }
 
-                // 2. Tramo desde Corner hasta End
-                const minX2 = Math.min(corner.getPositionInX(), end.getPositionInX());
-                const maxX2 = Math.max(corner.getPositionInX(), end.getPositionInX());
-                const minY2 = Math.min(corner.getPositionInY(), end.getPositionInY());
-                const maxY2 = Math.max(corner.getPositionInY(), end.getPositionInY());
+            // 2. Tramo desde Corner hasta End
+            const minX2 = Math.min(corner.getPositionInX(), end.getPositionInX());
+            const maxX2 = Math.max(corner.getPositionInX(), end.getPositionInX());
+            const minY2 = Math.min(corner.getPositionInY(), end.getPositionInY());
+            const maxY2 = Math.max(corner.getPositionInY(), end.getPositionInY());
 
-                for (let y = minY2; y <= maxY2; y++) {
-                    for (let x = minX2; x <= maxX2; x++) {
-                        matrixTiles[y][x] = new FloorTile();
-                    }
+            for (let y = minY2; y <= maxY2; y++) {
+                for (let x = minX2; x <= maxX2; x++) {
+                    matrixTiles[y][x] = new FloorTile();
                 }
-
-
-                // // Revisamos si el movimiento es primero horizontal o es primero vertical
-                // if (corridor.getCorner().getPositionInY() == corridor.getStart().getPositionInY()) {
-
-                //     for (let positionInX: number = minPositionInX; positionInX <= maxPositionInX; positionInX++) {
-                //         matrixTiles[corridor.getStart().getPositionInY()][positionInX] = new FloorTile();
-                //     }
-
-                //     for (let positionInY: number = minPositionInY; positionInY <= maxPositionInY; positionInY++) {
-                //         matrixTiles[positionInY][corridor.getEnd().getPositionInX()] = new FloorTile();
-                //     }
-                // } else {
-
-                //     for (let positionInY = minPositionInY; positionInY <= maxPositionInY; positionInY++) {
-                //         matrixTiles[positionInY][corridor.getStart().getPositionInX()] = new FloorTile();
-                //     }
-
-                //     for (let positionInX: number = minPositionInX; positionInX <= maxPositionInX; positionInX++) {
-                //         matrixTiles[corridor.getEnd().getPositionInY()][positionInX] = new FloorTile();
-                //     }
-                // }
             }
         }
     }

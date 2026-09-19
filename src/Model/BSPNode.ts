@@ -70,6 +70,10 @@ export class BSPNode {
         this.rightChild = rightChild;
     }
 
+    public setLeftChild(leftChild: BSPNode | undefined): void {
+        this.leftChild = leftChild;
+    }
+
     public getRoom(): Room | undefined {
         return this.room;
     }
