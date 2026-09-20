@@ -132,10 +132,10 @@ export class DungeonCreator {
 
             /*Dividimos el ancho de la room a la mitad y le sumamos la posicion en donde se comienza a dibujar 
             la habitacion asi obtenemos en la coordenada x en donde esta el centro de la habitación */
-            room.setPositionInXRoomCenter(room.getPositionInX() + (room.getWidth() / 2));
+            room.setPositionInXRoomCenter(Math.floor(room.getPositionInX() + (room.getWidth() / 2)));
 
 
-            room.setPositionInYRoomCenter(room.getPositionInY() + (room.getHeight() / 2));
+            room.setPositionInYRoomCenter(Math.floor(room.getPositionInY() + (room.getHeight() / 2)));
         }
     }
 

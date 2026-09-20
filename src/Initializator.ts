@@ -7,7 +7,7 @@ import { DungeonCreator } from './Model/DungeonCreator';
 const generateButton = document.getElementById('generateButton') as HTMLButtonElement;
 
 generateButton.addEventListener('click', () => {
-    let dungeonCreator: DungeonCreator = new DungeonCreator(38, 25);
+    let dungeonCreator: DungeonCreator = new DungeonCreator(50, 27);
     dungeonCreator.createDungeon();
     let dungeon: Dungeon = dungeonCreator.getDungeon();
     let dungeonDrawer: DungeonDrawer = new DungeonDrawer(dungeon);
