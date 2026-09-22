@@ -73,15 +73,15 @@ export class DungeonCreator {
             */
             let numberToMultiply: number = Math.random();
 
-            if (numberToMultiply < 0.3) {
-                console.log(numberToMultiply)
-                numberToMultiply += 0.5;
-            }
 
-            const roomPositionX = leaf.getPositionInX() + Math.floor(numberToMultiply  * (leaf.getWidth() - roomWidth));
-            const roomPositionY = leaf.getPositionInY() + Math.floor(numberToMultiply * (leaf.getHeight() - roomHeight));
+            let roomPositionX = leaf.getPositionInX() + Math.floor(numberToMultiply  * (leaf.getWidth() - roomWidth));
+            let roomPositionY = leaf.getPositionInY() + Math.floor(numberToMultiply * (leaf.getHeight() - roomHeight));
 
-            leaf.setRoom(new Room(roomPositionX, roomPositionY, roomWidth, roomHeight));
+            // Le sumo uno a la posicion en x si es 0, esto es para que nunca aparezca pegada en su contenedor hoja.
+            roomPositionX = roomPositionX == 0 ? roomPositionX + 1 : roomPositionX;
+            roomPositionY = roomPositionY == 0 ? roomPositionY + 1 : roomPositionY;
+
+            leaf.setRoom(new Room(roomPositionX, roomPositionY, roomWidth , roomHeight));
         }
     }
 
