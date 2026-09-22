@@ -3,7 +3,7 @@ export abstract class Tile {
     private color: string;
 
     constructor() {
-        this.size = 30; // Todos los tiles tiene le mismo tamaño
+        this.size = 32; // Todos los tiles tiene le mismo tamaño
         this.color = "white" // valor predetermiado, aunque no importa por que los colores estan guardados en cada clase hija.
     }   
 
