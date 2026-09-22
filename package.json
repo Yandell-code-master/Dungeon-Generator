@@ -14,6 +14,7 @@
   },
   "_devDependencies-explanation": "This part is for the dependencies that are necesary while developing",
   "devDependencies": {
+    "delaunator": "^5.1.0",
     "tsx": "^4.23.15",
     "typescript": "~6.0.2",
     "vite": "^8.2.0"

@@ -57,9 +57,11 @@ export class DungeonCreator {
             const minRoomWidth = Math.max(3, Math.floor(leaf.getWidth() * 0.5));
             const minRoomHeight = Math.max(3, Math.floor(leaf.getHeight() * 0.5));
 
-            // Ancho y alto aleatorios dentro de los límites del nodo
+            // Ancho y alto aleatorios dentro de los límites del nodo 
+            // El ancho y alto no serán igual al ancho y alto de las hojas que lo contienen
             const roomWidth = Math.floor(Math.random() * (leaf.getWidth() - minRoomWidth)) + minRoomWidth;
             const roomHeight = Math.floor(Math.random() * (leaf.getHeight() - minRoomHeight)) + minRoomHeight;
+
 
             /* Es una posicion aleatoria, la cual se elije con el espacio sobrantes tanto en ancho como en alto, entonces la room se va a ir moviendo entre esos espacios sobrantes
             por ejemplo:
@@ -76,6 +78,8 @@ export class DungeonCreator {
 
             let roomPositionX = leaf.getPositionInX() + Math.floor(numberToMultiply  * (leaf.getWidth() - roomWidth));
             let roomPositionY = leaf.getPositionInY() + Math.floor(numberToMultiply * (leaf.getHeight() - roomHeight));
+
+            // console.log(roomPositionX, roomPositionY);
 
             // Le sumo uno a la posicion en x si es 0, esto es para que nunca aparezca pegada en su contenedor hoja.
             roomPositionX = roomPositionX == 0 ? roomPositionX + 1 : roomPositionX;
