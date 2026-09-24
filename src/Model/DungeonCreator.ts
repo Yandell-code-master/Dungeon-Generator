@@ -59,8 +59,8 @@ export class DungeonCreator {
 
             // Ancho y alto aleatorios dentro de los límites del nodo 
             // El ancho y alto no serán igual al ancho y alto de las hojas que lo contienen
-            const roomWidth = Math.floor(Math.random() * (leaf.getWidth() - minRoomWidth)) + minRoomWidth;
-            const roomHeight = Math.floor(Math.random() * (leaf.getHeight() - minRoomHeight)) + minRoomHeight;
+            const roomWidth = Math.floor(Math.random() * (leaf.getWidth() - minRoomWidth - 1)) + minRoomWidth;
+            const roomHeight = Math.floor(Math.random() * (leaf.getHeight() - minRoomHeight - 1)) + minRoomHeight;
 
 
             /* Es una posicion aleatoria, la cual se elije con el espacio sobrantes tanto en ancho como en alto, entonces la room se va a ir moviendo entre esos espacios sobrantes
@@ -76,14 +76,16 @@ export class DungeonCreator {
             let numberToMultiply: number = Math.random();
 
 
-            let roomPositionX = leaf.getPositionInX() + Math.floor(numberToMultiply  * (leaf.getWidth() - roomWidth));
-            let roomPositionY = leaf.getPositionInY() + Math.floor(numberToMultiply * (leaf.getHeight() - roomHeight));
+            let roomPositionX = Math.floor(numberToMultiply  * (leaf.getWidth() - roomWidth));
+            let roomPositionY = Math.floor(numberToMultiply * (leaf.getHeight() - roomHeight));
 
             // console.log(roomPositionX, roomPositionY);
 
             // Le sumo uno a la posicion en x si es 0, esto es para que nunca aparezca pegada en su contenedor hoja.
-            roomPositionX = roomPositionX == 0 ? roomPositionX + 1 : roomPositionX;
-            roomPositionY = roomPositionY == 0 ? roomPositionY + 1 : roomPositionY;
+            roomPositionX = roomPositionX == 0 ? roomPositionX + 1 + leaf.getPositionInX() : roomPositionX + leaf.getPositionInX();
+            roomPositionY = roomPositionY == 0 ? roomPositionY + 1 + leaf.getPositionInY(): roomPositionY + leaf.getPositionInY();
+            
+            console.log(roomPositionY, roomPositionX)
 
             leaf.setRoom(new Room(roomPositionX, roomPositionY, roomWidth , roomHeight));
         }
@@ -116,6 +118,20 @@ export class DungeonCreator {
         }
 
         return rigthCompetitor;
+    }
+
+    private getRoomsToConect(): Rooms[][] {
+        /*
+        Primero utilizamos dulanator que se encarga de hacer la triangulacion de dulenay lo cual conecta todas la habitaciones con sus vecinos cercanos
+        de esta forma vamos a evitar que se hagan conexiones sin sentido osea que un pasillo recorra todas la mazmorra para llegar a su destino.
+
+        Este algoritmo nos va a devolver en esencia un grafo.
+        */
+
+        /*
+        Luego tenemos que utilizar el método Krustel
+        */
+
     }
 
     private getRoomsFromBSPTree(): Room[] {
