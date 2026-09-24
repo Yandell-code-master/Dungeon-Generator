@@ -8,6 +8,7 @@ import { Corridor } from "./Corridor";
 import { Dungeon } from "./Dungeon";
 import { WallTile } from "./WallTile";
 import { FloorTile } from "./FloorTile";
+import Delaunator from 'delaunator';
 
 export class DungeonCreator {
     private bSPTree: BSPTree;
@@ -120,16 +121,28 @@ export class DungeonCreator {
         return rigthCompetitor;
     }
 
-    private getRoomsToConect(): Rooms[][] {
+    private getRoomsToConect(): Room[][] {
+        const centerPoints: Point[] = this.getCentersPointArray(); 
+        
+
         /*
-        Primero utilizamos dulanator que se encarga de hacer la triangulacion de dulenay lo cual conecta todas la habitaciones con sus vecinos cercanos
+        Utilizamos dulanator que se encarga de hacer la triangulacion de dulenay lo cual conecta todas la habitaciones con sus vecinos cercanos
         de esta forma vamos a evitar que se hagan conexiones sin sentido osea que un pasillo recorra todas la mazmorra para llegar a su destino.
 
-        Este algoritmo nos va a devolver en esencia un grafo.
+        Este algoritmo nos va a devolver en esencia un grafo con peso y el peso de esas aristas va a ser la longitud de la misma.
         */
+        const graphConnected = new Delaunator.from(centerPoints, (point) => point.getPositionInX(), (point) => point.getPositionInY)
 
         /*
-        Luego tenemos que utilizar el método Krustel
+        Utilizar el método Kruskal que es un método el cual dandole un grafo conexo (Todos los vertices estan conectados por un camíno), no dirigido (los caminos se pueden recorrer en ambas direcciones) y ponderado (los caminos tienen un peso)
+        este encuentra el MST (Minimun Space Tree), hay que recordar que un arbol al fin y al cabo es un grafo convexo y acíclico, justamente lo que el metodo Kruskal nos va a proporcionar
+        
+        Aciclico significa que el arbol no tenga ciclos osea que haciendo tres saltos no se pueda volver al mismo nodo por ejemplo que el nodo A esté conectado al B y el B este conectado al C y el C este conectado al A entonces yo puedo ir del 
+        A -> B y B -> C y C -> A como se puede ver si crea un ciclo, esto significa que los hijos de un nodo en el arbol no puede estar conectados entre si.
+
+
+        También un ciclo es que se puede ir y voler al mismo nodo sin repetir una arista, por ejmplo paso de A -> B y B -> C y C -> A, como se puede ver en ningun momento repetí arista
+        e igualmente volví al punto de inicio.
         */
 
     }
@@ -151,16 +164,29 @@ export class DungeonCreator {
         return rooms;
     }
 
+    private getCentersPointArray(): Point[]{
+        const rooms = this.getRoomsFromBSPTree();
+        const centerPoints: Point[] = [];
+
+        for (const room of rooms) {
+            centerPoints.push(room.getCenterPoint());
+        }
+
+        return centerPoints;
+    }
+
     private setCenterPointsRooms(rooms: Room[]) {
 
         for (const room of rooms) {
+            const centerPoint = room.getCenterPoint();
+
 
             /*Dividimos el ancho de la room a la mitad y le sumamos la posicion en donde se comienza a dibujar 
             la habitacion asi obtenemos en la coordenada x en donde esta el centro de la habitación */
-            room.setPositionInXRoomCenter(Math.floor(room.getPositionInX() + (room.getWidth() / 2)));
+            centerPoint.setPositionInX(Math.floor(room.getPositionInX() + (room.getWidth() / 2)));
 
 
-            room.setPositionInYRoomCenter(Math.floor(room.getPositionInY() + (room.getHeight() / 2)));
+            centerPoint.setPositionInY(Math.floor(room.getPositionInY() + (room.getHeight() / 2)));
         }
     }
 

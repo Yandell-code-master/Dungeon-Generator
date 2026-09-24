@@ -1,5 +1,8 @@
+import {Point} from "./Point";
+
+
 /* 
-Clase que representa una habitacion que esta dentro de una leaf especifica del arbol de BSPTree
+Clase que representa una habitacion que esta dentro de una hoja especifica del arbol de BSPTree
 */
 
 export class Room {
@@ -8,9 +11,8 @@ export class Room {
     private width: number;
     private height: number;
 
-    // Las coordenanas para encontrar el centro de la habitación
-    private positionInXRoomCenter: number = 0;
-    private positionInYRoomCenter: number = 0;
+    // Las coordenanas para encontrar el centro de la habitación, comienzan en 0 luego les asignamos valor
+    private centerPoint: Point = new Point(0, 0);
 
     constructor(positionInX: number, positionInY: number, width: number, height: number) {
         this.positionInX = positionInX;
@@ -35,19 +37,11 @@ export class Room {
         return this.height
     }
 
-    public setPositionInXRoomCenter(positionInXRoomCenter: number) {
-        this.positionInXRoomCenter = positionInXRoomCenter;
+    public setCenterPoint(centerPoint: Point) {
+        this.centerPoint = centerPoint;
     }
 
-    public getPositionInXRoomCenter(): number {
-        return this.positionInXRoomCenter;
-    }
-
-    public setPositionInYRoomCenter(positionInYRoomCenter: number) {
-        this.positionInYRoomCenter = positionInYRoomCenter;
-    }
-
-    public getPositionInYRoomCenter(): number {
-        return this.positionInYRoomCenter;
+    public getCenterPoint(): Point {
+        return this.centerPoint;
     }
 }
