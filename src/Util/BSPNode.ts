@@ -1,5 +1,5 @@
 
-import { Room } from "./Room.ts";
+import { Room } from "../Model/Room.ts";
 
 export class BSPNode {
 

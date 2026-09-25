@@ -2,13 +2,15 @@
 
 import { BSPNode } from "./BSPNode";
 import { BSPTree } from "./BSPTree";
-import { Room } from "./Room";
-import { Point } from "./Point"
-import { Corridor } from "./Corridor";
-import { Dungeon } from "./Dungeon";
-import { WallTile } from "./WallTile";
-import { FloorTile } from "./FloorTile";
+import { Room } from "../Model/Room";
+import { Point } from "../Model/Point"
+import { Corridor } from "../Model/Corridor";
+import { Dungeon } from "../Model/Dungeon";
+import { WallTile } from "../Model/WallTile";
+import { FloorTile } from "../Model/FloorTile";
 import Delaunator from 'delaunator';
+import { Edge } from "../Model/Edge";
+import { Util } from "./Util";
 
 export class DungeonCreator {
     private bSPTree: BSPTree;
@@ -77,18 +79,18 @@ export class DungeonCreator {
             let numberToMultiply: number = Math.random();
 
 
-            let roomPositionX = Math.floor(numberToMultiply  * (leaf.getWidth() - roomWidth));
+            let roomPositionX = Math.floor(numberToMultiply * (leaf.getWidth() - roomWidth));
             let roomPositionY = Math.floor(numberToMultiply * (leaf.getHeight() - roomHeight));
 
             // console.log(roomPositionX, roomPositionY);
 
             // Le sumo uno a la posicion en x si es 0, esto es para que nunca aparezca pegada en su contenedor hoja.
             roomPositionX = roomPositionX == 0 ? roomPositionX + 1 + leaf.getPositionInX() : roomPositionX + leaf.getPositionInX();
-            roomPositionY = roomPositionY == 0 ? roomPositionY + 1 + leaf.getPositionInY(): roomPositionY + leaf.getPositionInY();
-            
+            roomPositionY = roomPositionY == 0 ? roomPositionY + 1 + leaf.getPositionInY() : roomPositionY + leaf.getPositionInY();
+
             console.log(roomPositionY, roomPositionX)
 
-            leaf.setRoom(new Room(roomPositionX, roomPositionY, roomWidth , roomHeight));
+            leaf.setRoom(new Room(roomPositionX, roomPositionY, roomWidth, roomHeight));
         }
     }
 
@@ -122,16 +124,35 @@ export class DungeonCreator {
     }
 
     private getRoomsToConect(): Room[][] {
-        const centerPoints: Point[] = this.getCentersPointArray(); 
-        
+        const centerPoints: Point[] = this.getCentersPointArray();
+        const edges: Edge[] = []
 
         /*
         Utilizamos dulanator que se encarga de hacer la triangulacion de dulenay lo cual conecta todas la habitaciones con sus vecinos cercanos
         de esta forma vamos a evitar que se hagan conexiones sin sentido osea que un pasillo recorra todas la mazmorra para llegar a su destino.
-
-        Este algoritmo nos va a devolver en esencia un grafo con peso y el peso de esas aristas va a ser la longitud de la misma.
         */
-        const graphConnected = new Delaunator.from(centerPoints, (point) => point.getPositionInX(), (point) => point.getPositionInY)
+
+        // Obtenemos un objeto de triangulación delaunay
+        const delaunayTriangle = Delaunator.from(centerPoints, (point) => point.getPositionInX(), (point) => point.getPositionInY());
+
+        // Obtenemos el grafo que obtuvimos de la triangulación
+        // Nos da una matriz de numeros en la cual cada lista adentro tiene los indices (indice de el punto en la lista centerPoints) de tres puntos que forman un triangulo este es el grafo.
+        const graphConnected = delaunayTriangle.triangles;
+
+        /*
+        Debemos obtener los pesos de las aristas esto lo hacemos calculando la distancia eucladiana
+        */
+        const triangles: Point[][] = Array(graphConnected.length).fill(null).map(() => Array(3).fill(null));
+        let triangleIndex: number = 0
+        for (let triangle of triangles) {
+
+
+            for (let index = triangleIndex * 3; index < 3; index++) {
+                graphConnected
+            }
+
+            triangleIndex++;
+        }
 
         /*
         Utilizar el método Kruskal que es un método el cual dandole un grafo conexo (Todos los vertices estan conectados por un camíno), no dirigido (los caminos se pueden recorrer en ambas direcciones) y ponderado (los caminos tienen un peso)
@@ -164,7 +185,7 @@ export class DungeonCreator {
         return rooms;
     }
 
-    private getCentersPointArray(): Point[]{
+    private getCentersPointArray(): Point[] {
         const rooms = this.getRoomsFromBSPTree();
         const centerPoints: Point[] = [];
 

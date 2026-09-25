@@ -1,6 +1,6 @@
 import { Dungeon } from './Model/Dungeon';
-import { DungeonDrawer } from './Model/DungeonDrawer';
-import { DungeonCreator } from './Model/DungeonCreator';
+import { DungeonDrawer } from './Util/DungeonDrawer';
+import { DungeonCreator } from './Util/DungeonCreator';
 
 
 // Trae el boton que inicializa la generacion del mapa

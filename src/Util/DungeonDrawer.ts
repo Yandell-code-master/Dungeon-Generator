@@ -1,4 +1,4 @@
-import { Dungeon } from './Dungeon';
+import { Dungeon } from '../Model/Dungeon';
 
 // Esta clase está encargada de dibujar el mapa dungeon en el canvas
 class DungeonDrawer {
