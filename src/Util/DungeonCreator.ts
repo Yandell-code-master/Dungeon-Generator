@@ -142,7 +142,6 @@ export class DungeonCreator {
         const triangles = Util.getPointsOfTriangles(graphConnected, centerPoints);
         const edges = Util.getEdgesFromTriangles(triangles);
 
-
         /*
         Utilizar el método Kruskal que es un método el cual dandole un grafo conexo (Todos los vertices estan conectados por un camíno), no dirigido (los caminos se pueden recorrer en ambas direcciones) y ponderado (los caminos tienen un peso)
         este encuentra el MST (Minimun Space Tree), hay que recordar que un arbol al fin y al cabo es un grafo convexo y acíclico, justamente lo que el metodo Kruskal nos va a proporcionar
@@ -154,6 +153,8 @@ export class DungeonCreator {
         También un ciclo es que se puede ir y voler al mismo nodo sin repetir una arista, por ejmplo paso de A -> B y B -> C y C -> A, como se puede ver en ningun momento repetí arista
         e igualmente volví al punto de inicio.
         */
+
+        
 
     }
 
