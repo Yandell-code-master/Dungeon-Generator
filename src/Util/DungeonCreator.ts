@@ -125,7 +125,6 @@ export class DungeonCreator {
 
     private getRoomsToConect(): Room[][] {
         const centerPoints: Point[] = this.getCentersPointArray();
-        const edges: Edge[] = []
 
         /*
         Utilizamos dulanator que se encarga de hacer la triangulacion de dulenay lo cual conecta todas la habitaciones con sus vecinos cercanos
@@ -139,20 +138,10 @@ export class DungeonCreator {
         // Nos da una matriz de numeros en la cual cada lista adentro tiene los indices (indice de el punto en la lista centerPoints) de tres puntos que forman un triangulo este es el grafo.
         const graphConnected = delaunayTriangle.triangles;
 
-        /*
-        Debemos obtener los pesos de las aristas esto lo hacemos calculando la distancia eucladiana
-        */
-        const triangles: Point[][] = Array(graphConnected.length).fill(null).map(() => Array(3).fill(null));
-        let triangleIndex: number = 0
-        for (let triangle of triangles) {
+        // Obtenemos los triangulos ordenados en una matriz de puntos cada lista dentro de la matriz es un triangulo con sus respectivos tres puntos
+        const triangles = Util.getPointsOfTriangles(graphConnected, centerPoints);
+        const edges = Util.getEdgesFromTriangles(triangles);
 
-
-            for (let index = triangleIndex * 3; index < 3; index++) {
-                graphConnected
-            }
-
-            triangleIndex++;
-        }
 
         /*
         Utilizar el método Kruskal que es un método el cual dandole un grafo conexo (Todos los vertices estan conectados por un camíno), no dirigido (los caminos se pueden recorrer en ambas direcciones) y ponderado (los caminos tienen un peso)
@@ -224,15 +213,15 @@ export class DungeonCreator {
             if (Math.random() < 0.5) {
                 // Ruta 1: Moverse horizontalmente primero, luego verticalmente
                 // La esquina comparte la X del destino (centerB) y la Y del origen (centerA)
-                cornerPoint = new Point(roomEnd.getPositionInXRoomCenter(), roomStart.getPositionInYRoomCenter())
+                cornerPoint = new Point(roomEnd.getCenterPoint().getPositionInX(), roomStart.getCenterPoint().getPositionInY())
             } else {
                 // Ruta 2: Moverse verticalmente primero, luego horizontalmente
                 // La esquina comparte la X del origen (centerA) y la Y del destino (centerB)
 
-                cornerPoint = new Point(roomStart.getPositionInXRoomCenter(), roomEnd.getPositionInYRoomCenter())
+                cornerPoint = new Point(roomStart.getCenterPoint().getPositionInX(), roomEnd.getCenterPoint().getPositionInY())
             }
 
-            corridors.push(new Corridor(new Point(roomStart.getPositionInXRoomCenter(), roomStart.getPositionInYRoomCenter()), cornerPoint, new Point(roomEnd.getPositionInXRoomCenter(), roomEnd.getPositionInYRoomCenter())));
+            corridors.push(new Corridor(new Point(roomStart.getCenterPoint().getPositionInY(), roomStart.getCenterPoint().getPositionInY()), cornerPoint, new Point(roomEnd.getCenterPoint().getPositionInX(), roomEnd.getCenterPoint().getPositionInY())));
         }
 
         this.dungeon.setCorridors(corridors);
