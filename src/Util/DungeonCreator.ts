@@ -11,6 +11,7 @@ import { FloorTile } from "../Model/FloorTile";
 import Delaunator from 'delaunator';
 import { Edge } from "../Model/Edge";
 import { Util } from "./Util";
+import { UnionFindTree } from "./UnionFindTree"
 
 export class DungeonCreator {
     private bSPTree: BSPTree;
@@ -139,8 +140,10 @@ export class DungeonCreator {
         const graphConnected = delaunayTriangle.triangles;
 
         // Obtenemos los triangulos ordenados en una matriz de puntos cada lista dentro de la matriz es un triangulo con sus respectivos tres puntos
-        const triangles = Util.getPointsOfTriangles(graphConnected, centerPoints);
-        const edges = Util.getEdgesFromTriangles(triangles);
+        const triangles: Point[][] = Util.getPointsOfTriangles(graphConnected, centerPoints);
+        const edges: Edge[] = Util.getEdgesFromTriangles(triangles);
+
+
 
         /*
         Utilizar el método Kruskal que es un método el cual dandole un grafo conexo (Todos los vertices estan conectados por un camíno), no dirigido (los caminos se pueden recorrer en ambas direcciones) y ponderado (los caminos tienen un peso)
@@ -149,13 +152,10 @@ export class DungeonCreator {
         Aciclico significa que el arbol no tenga ciclos osea que haciendo tres saltos no se pueda volver al mismo nodo por ejemplo que el nodo A esté conectado al B y el B este conectado al C y el C este conectado al A entonces yo puedo ir del 
         A -> B y B -> C y C -> A como se puede ver si crea un ciclo, esto significa que los hijos de un nodo en el arbol no puede estar conectados entre si.
 
-
         También un ciclo es que se puede ir y voler al mismo nodo sin repetir una arista, por ejmplo paso de A -> B y B -> C y C -> A, como se puede ver en ningun momento repetí arista
         e igualmente volví al punto de inicio.
         */
-
         
-
     }
 
     private getRoomsFromBSPTree(): Room[] {
