@@ -2,52 +2,47 @@
 con como son los arboles normalmente que apuntan a sus hijos*/
 
 class UnionFindTree {
-    private padre: number[];
-    private rango: number[];
+    private father: number[];
+    private range: number[];
 
-    constructor(n: number) {
-        this.padre = Array.from({ length: n }, (_, i) => i);
-        this.rango = new Array(n).fill(0);
+    constructor(amountNodes: number) {
+        this.father = Array.from({ length: amountNodes }, (_, i) => i);
+        this.range = new Array(amountNodes).fill(0);
     }
 
-    find(x: number): number {
-        if (this.padre[x] !== x) {
-            this.padre[x] = this.find(this.padre[x]);
+    // Este metodo encuentra la raiz del arbol
+    public find(index: number): number {
+
+        // Si el indice del padre no es el mismo al indice pasado significa que no es a raiz y se llama recursivamente
+        if (this.father[index] !== index) {
+            this.father[index] = this.find(this.father[index]);
         }
-        return this.padre[x];
+
+        return this.father[index];
     }
 
-    union(x: number, y: number): boolean {
-        const raizX = this.find(x);
-        const raizY = this.find(y);
+    // Une los grupos si es que los nodos estan en diferente grupos
+    public union(firstNodeIndex: number, secondNodeIndex: number): boolean {
+        const firstNodeRootIndex = this.find(firstNodeIndex);
+        const secondNodeRootIndex = this.find(secondNodeIndex);
 
-        if (raizX === raizY) {
+        if (firstNodeRootIndex === secondNOdeRootIndex) {
             return false;
         }
 
-        if (this.rango[raizX] < this.rango[raizY]) {
-            this.padre[raizX] = raizY;
-        } else if (this.rango[raizX] > this.rango[raizY]) {
-            this.padre[raizY] = raizX;
+        if (this.range[firstNodeRootIndex] < this.range[secondNodeRootIndex]) {
+            this.father[firstNodeRootIndex] = secondNodeRootIndex;
+        } else if (this.range[firstNodeRootIndex] > this.range[secondNodeRootIndex]) {
+            this.father[firstNodeRootIndex] = secondNodeRootIndex;
         } else {
-            this.padre[raizY] = raizX;
-            this.rango[raizX]++;
+            this.father[secondNodeRootIndex] = firstNodeRootIndex;
+            this.range[firstNodeRootIndex]++;
         }
 
         return true;
     }
 
-    conectados(x: number, y: number): boolean {
+    public areConnected (x: number, y: number): boolean {
         return this.find(x) === this.find(y);
     }
 }
-
-const uf = new UnionFind(5);
-
-console.log(uf.union(0, 1));
-console.log(uf.union(2, 3));
-console.log(uf.union(1, 2));
-console.log(uf.union(0, 2));
-console.log(uf.union(3, 4));
-
-console.log(uf.conectados(0, 4));
