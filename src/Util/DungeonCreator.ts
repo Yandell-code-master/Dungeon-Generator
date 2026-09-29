@@ -11,7 +11,7 @@ import { FloorTile } from "../Model/FloorTile";
 import Delaunator from 'delaunator';
 import { Edge } from "../Model/Edge";
 import { Util } from "./Util";
-import { UnionFindTree } from "./UnionFindTree"
+import { UnionFindTree } from "./UnionFind"
 
 export class DungeonCreator {
     private bSPTree: BSPTree;
