@@ -1,7 +1,7 @@
 /*Esta clase representa un tipo de padre que se utiliza para representar un grupo de nodos que todos apuntan hacia su padre, esto difiere 
 con como son los arboles normalmente que apuntan a sus hijos*/
 
-class UnionFind {
+export class UnionFind {
     private father: number[];
     private range: number[];
 
@@ -16,8 +16,11 @@ class UnionFind {
     // Este metodo encuentra la raiz del arbol
     private find(index: number): number {
 
-        // Si el indice del padre no es el mismo al indice pasado significa que no es a raiz y se llama recursivamente
+        // Si el indice del padre no es el mismo al indice pasado significa que no es la raiz y se llama recursivamente
         if (this.father[index] !== index) {
+
+            /* Esto es un metodo de compresión que lo que hace es hacer el arbol más pequeño haciendo que los nodos que va revisando 
+            dependan tengan de padre directamente la raiz para que sea mas rapido buscar la raiz */
             this.father[index] = this.find(this.father[index]);
         }
 

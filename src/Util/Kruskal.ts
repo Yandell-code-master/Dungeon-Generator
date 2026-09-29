@@ -1,21 +1,41 @@
-import {Edge} from "../Model/Edge"
-import {UnionFind} from "./UnionFind"
+import { Edge } from "../Model/Edge"
+import { UnionFind } from "./UnionFind"
+import { Point } from "../Model/Point";
+import { Util } from "./Util";
 
 class Kruskal {
-    public static getMSTWithKruskal(points: number[][], edgesWithWeight: Edge[]): Edge[] {
-        const unionFind: UnionFind = new UnionFind();
-        edgesWithWeight.sort( (firstEdge: Edge, secondEdge: Edge) => firstEdge.getWeight()  - secondEdge.getWeight());
+    public getMSTWithKruskal(points: Point[], edgesWithWeight: Edge[]): Edge[] {
+        const unionFind: UnionFind = new UnionFind(points.length);
+        edgesWithWeight.sort((firstEdge: Edge, secondEdge: Edge) => firstEdge.getWeight() - secondEdge.getWeight());
 
-        const mst: Edge[] = [];
+        const minimunSpaceTree: Edge[] = [];
 
-        for (const edgeWithEdge of edgesWithWeight) {
+        for (const edgeWithWeight of edgesWithWeight) {
+            if (minimunSpaceTree.length === points.length - 1) {
+                break;
+            }
+
+            let firstPointIndex: number = this.getPointIndex(points, edgeWithWeight.getStartPoint());
+            let secondPointIndex: number = this.getPointIndex(points, edgeWithWeight.getEndPoint());
 
 
-            if (uf.union(u, v)) { 
-                mst.push({ u, v, peso });
+            // Si lo logra unir entonces lo pone en el MST
+            if (unionFind.union(firstPointIndex, secondPointIndex)) {
+                minimunSpaceTree.push(edgeWithWeight);
             }
         }
 
-        return mst;
+        return minimunSpaceTree;
+    }
+
+    private getPointIndex(points: Point[], point: Point): number {
+        for (let pointIndex = 0; pointIndex < points.length; pointIndex++) {
+
+            if (points[pointIndex] === point) {
+                return pointIndex;
+            }
+        }
+
+        return -1;
     }
 }
