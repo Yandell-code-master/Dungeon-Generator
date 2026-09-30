@@ -1,11 +1,11 @@
-import type { Point } from "./Point";
+import type { PointAndIndex } from "../Util/PointAndIndex";
 
 export class Edge {
     private weight: number;
-    private startPoint: Point;
-    private endPoint: Point;
+    private startPoint: PointAndIndex;
+    private endPoint: PointAndIndex;
 
-    constructor(weight: number, startPoint: Point, endPoint: Point) {
+    constructor(weight: number, startPoint: PointAndIndex, endPoint: PointAndIndex) {
         this.weight = weight;
         this.startPoint = startPoint;
         this.endPoint = endPoint;
@@ -19,19 +19,19 @@ export class Edge {
         this.weight = weight;
     }
 
-    public getStartPoint(): Point{
+    public getStartPoint(): PointAndIndex {
         return this.startPoint;
     }
 
-    public setStartPoint(startPoint: Point) {
+    public setStartPoint(startPoint: PointAndIndex) {
         this.startPoint = startPoint;
     }
 
-    public getEndPoint(): Point {
+    public getEndPoint(): PointAndIndex {
         return this.endPoint;
     }
 
-    public setEndPoint(endPoint: Point){
+    public setEndPoint(endPoint: PointAndIndex){
         this.endPoint = endPoint;
     }
 }

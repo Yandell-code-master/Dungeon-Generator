@@ -36,7 +36,7 @@ export class Util {
     }
 
     // Devuelve una lista con tres indices de tres puntos que forman el triangulo 
-    public static getPointsOfTriangles(graphConnected: Uint32Array<ArrayBuffer>, centerPoints: Point[]): number[][] {
+    public static getPointsOfTriangles(graphConnected: Uint32Array<ArrayBuffer>, centerPoints: Point[]): PointAndIndex[][] {
         const triangleQuantity: number = graphConnected.length / 3;
         let triangles: PointAndIndex[][] = [];
 

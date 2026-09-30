@@ -28,14 +28,5 @@ class Kruskal {
         return minimunSpaceTree;
     }
 
-    private getPointIndex(points: Point[], point: Point): number {
-        for (let pointIndex = 0; pointIndex < points.length; pointIndex++) {
 
-            if (points[pointIndex] === point) {
-                return pointIndex;
-            }
-        }
-
-        return -1;
-    }
 }

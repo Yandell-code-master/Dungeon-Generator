@@ -12,6 +12,7 @@ import Delaunator from 'delaunator';
 import { Edge } from "../Model/Edge";
 import { Util } from "./Util";
 import { UnionFindTree } from "./UnionFind"
+import type { PointAndIndex } from "./PointAndIndex";
 
 export class DungeonCreator {
     private bSPTree: BSPTree;
@@ -140,7 +141,7 @@ export class DungeonCreator {
         const graphConnected = delaunayTriangle.triangles;
 
         // Obtenemos los triangulos ordenados en una matriz de puntos cada lista dentro de la matriz es un triangulo con sus respectivos tres puntos
-        const triangles: Point[][] = Util.getPointsOfTriangles(graphConnected, centerPoints);
+        const triangles: PointAndIndex[][] = Util.getPointsOfTriangles(graphConnected, centerPoints);
         const edges: Edge[] = Util.getEdgesFromTriangles(triangles);
 
 
