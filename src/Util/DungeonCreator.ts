@@ -11,7 +11,6 @@ import { FloorTile } from "../Model/FloorTile";
 import Delaunator from 'delaunator';
 import { Edge } from "../Model/Edge";
 import { Util } from "./Util";
-import type { PointAndIndex } from "./PointAndIndex";
 import { Kruskal } from "./Kruskal";
 
 export class DungeonCreator {
@@ -126,43 +125,26 @@ export class DungeonCreator {
     }
 
     private getMinimunSpaceTree(): Edge[] {
-        const centerPoints: Point[] = this.getCenterPoints();
-
-        /*
-        Utilizamos dulanator que se encarga de hacer la triangulacion de dulenay lo cual conecta todas la habitaciones con sus vecinos cercanos
-        de esta forma vamos a evitar que se hagan conexiones sin sentido osea que un pasillo recorra todas la mazmorra para llegar a su destino.
-        */
-
-        // Obtenemos un objeto de triangulación delaunay
-        const delaunayTriangle = Delaunator.from(centerPoints, (point) => point.getPositionInX(), (point) => point.getPositionInY());
-
-        // Obtenemos el grafo que obtuvimos de la triangulación
-        // Nos da una matriz de numeros en la cual cada lista adentro tiene los indices (indice de el punto en la lista centerPoints) de tres puntos que forman un triangulo este es el grafo.
-        const graphConnected = delaunayTriangle.triangles;
-
-        // Obtenemos los triangulos ordenados en una matriz de puntos cada lista dentro de la matriz es un triangulo con sus respectivos tres puntos
-        const triangles: Point[][] = Util.getPointsOfTriangles(graphConnected, centerPoints);
-        const edges: Edge[] = Util.getEdgesFromTriangles(triangles);
-
-
-        /*
-        Utilizar el método Kruskal que es un método el cual dandole un grafo conexo (Todos los vertices estan conectados por un camíno), no dirigido (los caminos se pueden recorrer en ambas direcciones) y ponderado (los caminos tienen un peso)
-        este encuentra el MST (Minimun Space Tree), hay que recordar que un arbol al fin y al cabo es un grafo convexo y acíclico, justamente lo que el metodo Kruskal nos va a proporcionar
-        
-        Aciclico significa que el arbol no tenga ciclos osea que haciendo tres saltos no se pueda volver al mismo nodo por ejemplo que el nodo A esté conectado al B y el B este conectado al C y el C este conectado al A entonces yo puedo ir del 
-        A -> B y B -> C y C -> A como se puede ver si crea un ciclo, esto significa que los hijos de un nodo en el arbol no puede estar conectados entre si.
-
-        También un ciclo es que se puede ir y voler al mismo nodo sin repetir una arista, por ejmplo paso de A -> B y B -> C y C -> A, como se puede ver en ningun momento repetí arista
-        e igualmente volví al punto de inicio.
-        */
-
+        const centerPoints: Point[] = this.getCenterPointsFromRooms();
+        const edges: Edge[] = this.getEdges();
         const kruskal = new Kruskal();
-        const minimumSpaceTree: Edge[] = kruskal.getMSTWithKruskal(centerPoints, edges);    
+        const minimumSpaceTree: Edge[] = kruskal.getMSTWithKruskal(centerPoints, edges);
 
         this.addCiclesToMST(minimumSpaceTree, edges);
+        return minimumSpaceTree;
     }
 
-    private addCiclesToMST(minimunSpaceTree: Edge[], edges: Edge[]): Edge[] {
+    private getEdges(): Edge[] {
+        const centerPoints: Point[] = this.getCenterPointsFromRooms();
+
+        const delaunayTriangle = Delaunator.from(centerPoints, (point) => point.getPositionInX(), (point) => point.getPositionInY());
+        const graphConnected = delaunayTriangle.triangles;
+
+        const triangles: Point[][] = Util.getPointsOfTriangles(graphConnected, centerPoints);
+        return Util.getEdgesFromTriangles(triangles);
+    }
+
+    private addCiclesToMST(minimumSpaceTree: Edge[], edges: Edge[]): Edge[] {
         const mstSet = new Set<Edge>(minimumSpaceTree);
         const extraCandidates = edges.filter(edge => !mstSet.has(edge));
 
@@ -187,7 +169,7 @@ export class DungeonCreator {
         return rooms;
     }
 
-    private getCenterPoints(): Point[] {
+    private getCenterPointsFromRooms(): Point[] {
         const rooms = this.getRoomsFromBSPTree();
         const centerPoints: Point[] = [];
 
@@ -198,28 +180,28 @@ export class DungeonCreator {
         return centerPoints;
     }
 
-    private createCorridors(pairsRoomsToUnite: Room[][]) {
+    private createCorridors(edgesToUnite: Edge[]) {
         let cornerPoint: Point;
         const corridors: Corridor[] = [];
 
 
-        for (const pairRoomsToUnite of pairsRoomsToUnite) {
-            const roomStart: Room = pairRoomsToUnite[0];
-            const roomEnd: Room = pairRoomsToUnite[1];
+        for (const edge of edgesToUnite) {
+            const startPoint: Point = edge.getStartPoint();
+            const endPoint: Point = edge.getEndPoint();
 
             // Tiramos una moneda para decidir si el primer tramo es Horizontal o Vertical
             if (Math.random() < 0.5) {
                 // Ruta 1: Moverse horizontalmente primero, luego verticalmente
                 // La esquina comparte la X del destino (centerB) y la Y del origen (centerA)
-                cornerPoint = new Point(roomEnd.getCenterPoint().getPositionInX(), roomStart.getCenterPoint().getPositionInY())
+                cornerPoint = new Point(endPoint.getPositionInX(), startPoint.getPositionInY())
             } else {
                 // Ruta 2: Moverse verticalmente primero, luego horizontalmente
                 // La esquina comparte la X del origen (centerA) y la Y del destino (centerB)
 
-                cornerPoint = new Point(roomStart.getCenterPoint().getPositionInX(), roomEnd.getCenterPoint().getPositionInY())
+                cornerPoint = new Point(startPoint.getPositionInX(), endPoint.getPositionInY())
             }
 
-            corridors.push(new Corridor(new Point(roomStart.getCenterPoint().getPositionInY(), roomStart.getCenterPoint().getPositionInY()), cornerPoint, new Point(roomEnd.getCenterPoint().getPositionInX(), roomEnd.getCenterPoint().getPositionInY())));
+            corridors.push(new Corridor(new Point(startPoint.getPositionInY(), startPoint.getPositionInY()), cornerPoint, new Point(endPoint.getPositionInX(), endPoint.getPositionInY())));
         }
 
         this.dungeon.setCorridors(corridors);
