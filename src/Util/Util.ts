@@ -19,13 +19,13 @@ export class Util {
         return Math.sqrt((distanceInX * distanceInX) + (distanceInY * distanceInY));
     }
 
-    public static getEdgesFromTriangles(triangles: PointAndIndex[][]): Edge[] {
+    public static getEdgesFromTriangles(triangles: Point[][]): Edge[] {
         const edges: Edge[] = [];
 
         for (const triangle of triangles) {
-            const firstVertex = triangle[0].point;
-            const secondVertex = triangle[1].point;
-            const thirdVertex = triangle[2].point;
+            const firstVertex: Point = triangle[0];
+            const secondVertex: Point = triangle[1];
+            const thirdVertex: Point = triangle[2];
 
             edges.push(new Edge(Util.ecladianDistance(firstVertex, secondVertex), firstVertex, secondVertex));
             edges.push(new Edge(Util.ecladianDistance(secondVertex, thirdVertex), secondVertex, thirdVertex));
@@ -36,16 +36,16 @@ export class Util {
     }
 
     // Devuelve una lista con tres indices de tres puntos que forman el triangulo 
-    public static getPointsOfTriangles(graphConnected: Uint32Array<ArrayBuffer>, centerPoints: Point[]): PointAndIndex[][] {
+    public static getPointsOfTriangles(graphConnected: Uint32Array<ArrayBuffer>, centerPoints: Point[]): Point[][] {
         const triangleQuantity: number = graphConnected.length / 3;
-        let triangles: PointAndIndex[][] = [];
+        let triangles: Point[][] = [];
 
         for (let t = 0; t < triangleQuantity; t++) {
-            const triangle: PointAndIndex[] = [
+            const triangle: Point[] = [
                 // Recordar que graphConnected tiene indices de los puntos de la lista que le pasamos a delaunator
-                {point: centerPoints[graphConnected[t * 3]], index: graphConnected[t * 3]},
-                {point: centerPoints[graphConnected[t * 3 + 1]], index: graphConnected[t * 3 + 1]},
-                {point: centerPoints[graphConnected[t * 3 + 2]], index: graphConnected[t * 3 + 2]},
+                centerPoints[graphConnected[t * 3]],
+                centerPoints[graphConnected[t * 3 + 1]],
+                centerPoints[graphConnected[t * 3 + 2]],
             ];
 
             triangles.push(triangle);

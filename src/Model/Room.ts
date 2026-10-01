@@ -10,15 +10,20 @@ export class Room {
     private positionInY: number;
     private width: number;
     private height: number;
-
-    // Las coordenanas para encontrar el centro de la habitación, comienzan en 0 luego les asignamos valor
-    private centerPoint: Point = new Point(0, 0);
+    private centerPoint: Point = null as unknown as Point;
 
     constructor(positionInX: number, positionInY: number, width: number, height: number) {
         this.positionInX = positionInX;
         this.positionInY = positionInY;
         this.width = width;
         this.height = height;
+        this.calculateCenterPoint();
+    }
+    
+    private calculateCenterPoint() {
+        const centerX = this.positionInX + Math.floor(this.width / 2);
+        const centerY = this.positionInY + Math.floor(this.height / 2);
+        this.centerPoint = new Point(centerX, centerY);
     }
 
     public getPositionInX(): number {
@@ -35,10 +40,6 @@ export class Room {
 
     public getHeight(): number {
         return this.height
-    }
-
-    public setCenterPoint(centerPoint: Point) {
-        this.centerPoint = centerPoint;
     }
 
     public getCenterPoint(): Point {

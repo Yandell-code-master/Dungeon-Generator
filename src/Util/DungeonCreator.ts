@@ -11,8 +11,8 @@ import { FloorTile } from "../Model/FloorTile";
 import Delaunator from 'delaunator';
 import { Edge } from "../Model/Edge";
 import { Util } from "./Util";
-import { UnionFindTree } from "./UnionFind"
 import type { PointAndIndex } from "./PointAndIndex";
+import { Kruskal } from "./Kruskal";
 
 export class DungeonCreator {
     private bSPTree: BSPTree;
@@ -125,8 +125,8 @@ export class DungeonCreator {
         return rigthCompetitor;
     }
 
-    private getRoomsToConect(): Room[][] {
-        const centerPoints: Point[] = this.getCentersPointArray();
+    private getMinimunSpaceTree(): Edge[] {
+        const centerPoints: Point[] = this.getCenterPoints();
 
         /*
         Utilizamos dulanator que se encarga de hacer la triangulacion de dulenay lo cual conecta todas la habitaciones con sus vecinos cercanos
@@ -141,9 +141,8 @@ export class DungeonCreator {
         const graphConnected = delaunayTriangle.triangles;
 
         // Obtenemos los triangulos ordenados en una matriz de puntos cada lista dentro de la matriz es un triangulo con sus respectivos tres puntos
-        const triangles: PointAndIndex[][] = Util.getPointsOfTriangles(graphConnected, centerPoints);
+        const triangles: Point[][] = Util.getPointsOfTriangles(graphConnected, centerPoints);
         const edges: Edge[] = Util.getEdgesFromTriangles(triangles);
-
 
 
         /*
@@ -156,8 +155,22 @@ export class DungeonCreator {
         También un ciclo es que se puede ir y voler al mismo nodo sin repetir una arista, por ejmplo paso de A -> B y B -> C y C -> A, como se puede ver en ningun momento repetí arista
         e igualmente volví al punto de inicio.
         */
-        
+
+        const kruskal = new Kruskal();
+        const minimumSpaceTree: Edge[] = kruskal.getMSTWithKruskal(centerPoints, edges);    
+
+        this.addCiclesToMST(minimumSpaceTree, edges);
     }
+
+    private addCiclesToMST(minimunSpaceTree: Edge[], edges: Edge[]): Edge[] {
+        const mstSet = new Set<Edge>(minimumSpaceTree);
+        const extraCandidates = edges.filter(edge => !mstSet.has(edge));
+
+        const extraEdges = extraCandidates.filter(() => Math.random() < 0.15);
+        const corridorEdges = [...minimumSpaceTree, ...extraEdges];
+        return corridorEdges;
+    }
+
 
     private getRoomsFromBSPTree(): Room[] {
         const leaves = this.bSPTree.getLeaves();
@@ -166,8 +179,6 @@ export class DungeonCreator {
         for (const leave of leaves) {
             const room = leave.getRoom();
 
-            // Contemplamos que la room no sea undefined antes de poder hacer push 
-            // Aunque no puede ser undefined pero el compilador nos lo pide igual
             if (room) {
                 rooms.push(room);
             }
@@ -176,7 +187,7 @@ export class DungeonCreator {
         return rooms;
     }
 
-    private getCentersPointArray(): Point[] {
+    private getCenterPoints(): Point[] {
         const rooms = this.getRoomsFromBSPTree();
         const centerPoints: Point[] = [];
 
@@ -185,21 +196,6 @@ export class DungeonCreator {
         }
 
         return centerPoints;
-    }
-
-    private setCenterPointsRooms(rooms: Room[]) {
-
-        for (const room of rooms) {
-            const centerPoint = room.getCenterPoint();
-
-
-            /*Dividimos el ancho de la room a la mitad y le sumamos la posicion en donde se comienza a dibujar 
-            la habitacion asi obtenemos en la coordenada x en donde esta el centro de la habitación */
-            centerPoint.setPositionInX(Math.floor(room.getPositionInX() + (room.getWidth() / 2)));
-
-
-            centerPoint.setPositionInY(Math.floor(room.getPositionInY() + (room.getHeight() / 2)));
-        }
     }
 
     private createCorridors(pairsRoomsToUnite: Room[][]) {
