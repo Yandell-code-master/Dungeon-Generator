@@ -22,30 +22,14 @@ export class DungeonCreator {
         this.bSPTree = new BSPTree(this.dungeon.getWidth(), this.dungeon.getHeigth());
     }
 
-    public createDungeon() {
+    public createDungeon(): void {
         this.bSPTree.startTreeCreation();
 
         const bSPTreeLeaves: BSPNode[] = this.bSPTree.getLeaves();
         this.createRoomsInLeaves(bSPTreeLeaves);
 
-        const rooms: Room[] = this.getRoomsFromBSPTree();
-        this.setCenterPointsRooms(rooms);
-
-        const representantsToUnite: BSPNode[][] = [];
-        this.getAndSaveRepresentants(this.bSPTree.getRoot(), representantsToUnite);
-
-        const roomsToUnite: Room[][] = [];
-
-        for (const pair of representantsToUnite) {
-            const leftRoom = pair[0].getRoom();
-            const rigthRoom = pair[1].getRoom();
-
-            if (leftRoom && rigthRoom) {
-                roomsToUnite.push([leftRoom, rigthRoom]);
-            }
-        }
-
-        this.createCorridors(roomsToUnite);
+        const edgesToConnect = this.getEdgesToConnect();
+        this.createCorridors(edgesToConnect);
 
         this.fillMatrixWithWalls();
         this.buildRoomsInMatrixTiles();
@@ -95,11 +79,6 @@ export class DungeonCreator {
         }
     }
 
-    private isLeave(node: BSPNode): Boolean {
-        // Por lo que sabemos que si almenos uno de los hijos tiene algo adentro ambos hijos tendran también por lo que es un arbol binario, por lo que solamente es necesario revisar uno
-        return node.getLeftChild() ? false : true
-    }
-
     /*Lo que hace esta función no solamente devuelve el representantes de un grupo, sino que mientras los va encontrando los a guardando en una lista, cada representante es un par en una lista*/
     private getAndSaveRepresentants(node: BSPNode, listsOfRepresentants: BSPNode[][] = []): BSPNode {
         const leftChild = node.getLeftChild();
@@ -124,7 +103,7 @@ export class DungeonCreator {
         return rigthCompetitor;
     }
 
-    private getMinimunSpaceTree(): Edge[] {
+    private getEdgesToConnect(): Edge[] {
         const centerPoints: Point[] = this.getCenterPointsFromRooms();
         const edges: Edge[] = this.getEdges();
         const kruskal = new Kruskal();
