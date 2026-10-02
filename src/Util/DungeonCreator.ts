@@ -63,7 +63,6 @@ export class DungeonCreator {
             */
             let numberToMultiply: number = Math.random();
 
-
             let roomPositionX = Math.floor(numberToMultiply * (leaf.getWidth() - roomWidth));
             let roomPositionY = Math.floor(numberToMultiply * (leaf.getHeight() - roomHeight));
 
@@ -73,44 +72,46 @@ export class DungeonCreator {
             roomPositionX = roomPositionX == 0 ? roomPositionX + 1 + leaf.getPositionInX() : roomPositionX + leaf.getPositionInX();
             roomPositionY = roomPositionY == 0 ? roomPositionY + 1 + leaf.getPositionInY() : roomPositionY + leaf.getPositionInY();
 
-            console.log(roomPositionY, roomPositionX)
-
             leaf.setRoom(new Room(roomPositionX, roomPositionY, roomWidth, roomHeight));
         }
-    }
-
-    /*Lo que hace esta función no solamente devuelve el representantes de un grupo, sino que mientras los va encontrando los a guardando en una lista, cada representante es un par en una lista*/
-    private getAndSaveRepresentants(node: BSPNode, listsOfRepresentants: BSPNode[][] = []): BSPNode {
-        const leftChild = node.getLeftChild();
-        const rigthChild = node.getRightChild();
-
-        // Revisamos que sus hijos sean undefined, esto también es para que typscript nos deje despues poder usar estas variables como BSPNode
-        // En el caso de que sean undefined devolvemos el mismo nodo ya que el es el representante al ser una hoja
-        if (!leftChild || !rigthChild) {
-            return node;
-        }
-
-        // Buscamos ambos competidores aqui en donde se aplica la recursividad
-        let leftCompetitor: BSPNode = this.getAndSaveRepresentants(leftChild, listsOfRepresentants);
-        let rigthCompetitor: BSPNode = this.getAndSaveRepresentants(rigthChild, listsOfRepresentants);
-
-        listsOfRepresentants.push([leftCompetitor, rigthCompetitor])
-
-        if (Math.random() <= 0.5) {
-            return leftCompetitor;
-        }
-
-        return rigthCompetitor;
     }
 
     private getEdgesToConnect(): Edge[] {
         const centerPoints: Point[] = this.getCenterPointsFromRooms();
         const edges: Edge[] = this.getEdges();
         const kruskal = new Kruskal();
-        const minimumSpaceTree: Edge[] = kruskal.getMSTWithKruskal(centerPoints, edges);
+        const minimunSpaceTree: Edge[] = kruskal.getMSTWithKruskal(centerPoints, edges);
 
-        this.addCiclesToMST(minimumSpaceTree, edges);
-        return minimumSpaceTree;
+        return this.addCiclesToMST(minimunSpaceTree, edges);
+    }
+
+    private corridorCrossesOtherRoom(
+        start: Point, corner: Point, end: Point,
+        rooms: Room[], startRoom: Room, endRoom: Room
+    ): boolean {
+        const segments = [[start, corner], [corner, end]];
+
+        for (const [startPointOfSegment, endPointOfSegment] of segments) {
+            const minX = Math.min(startPointOfSegment.getPositionInX(), endPointOfSegment.getPositionInX());
+            const maxX = Math.max(startPointOfSegment.getPositionInX(), endPointOfSegment.getPositionInX());
+            const minY = Math.min(startPointOfSegment.getPositionInY(), endPointOfSegment.getPositionInY());
+            const maxY = Math.max(startPointOfSegment.getPositionInY(), endPointOfSegment.getPositionInY());
+
+            for (const room of rooms) {
+                if (room === startRoom || room === endRoom) continue;
+
+                const rx1 = room.getPositionInX();
+                const rx2 = rx1 + room.getWidth() - 1;
+                const ry1 = room.getPositionInY();
+                const ry2 = ry1 + room.getHeight() - 1;
+
+                // intersección de rectángulos
+                if (minX <= rx2 && maxX >= rx1 && minY <= ry2 && maxY >= ry1) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private getEdges(): Edge[] {
@@ -123,12 +124,12 @@ export class DungeonCreator {
         return Util.getEdgesFromTriangles(triangles);
     }
 
-    private addCiclesToMST(minimumSpaceTree: Edge[], edges: Edge[]): Edge[] {
-        const mstSet = new Set<Edge>(minimumSpaceTree);
+    private addCiclesToMST(minimunSpaceTree: Edge[], edges: Edge[]): Edge[] {
+        const mstSet = new Set<Edge>(minimunSpaceTree);
         const extraCandidates = edges.filter(edge => !mstSet.has(edge));
 
         const extraEdges = extraCandidates.filter(() => Math.random() < 0.15);
-        const corridorEdges = [...minimumSpaceTree, ...extraEdges];
+        const corridorEdges = [...minimunSpaceTree, ...extraEdges];
         return corridorEdges;
     }
 
@@ -180,7 +181,7 @@ export class DungeonCreator {
                 cornerPoint = new Point(startPoint.getPositionInX(), endPoint.getPositionInY())
             }
 
-            corridors.push(new Corridor(new Point(startPoint.getPositionInY(), startPoint.getPositionInY()), cornerPoint, new Point(endPoint.getPositionInX(), endPoint.getPositionInY())));
+            corridors.push(new Corridor(new Point(startPoint.getPositionInX(), startPoint.getPositionInY()), cornerPoint, new Point(endPoint.getPositionInX(), endPoint.getPositionInY())));
         }
 
         this.dungeon.setCorridors(corridors);

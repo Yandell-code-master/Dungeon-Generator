@@ -14,8 +14,8 @@ export class BSPTree {
     private pieceMinSize: number; // Se refiere a celdas de 32 pixeles
 
     constructor(initialWidthRoot: number, initialHeigthRoot: number) {
-        this.root = new BSPNode(0, 0, initialWidthRoot, initialHeigthRoot); // Se crea por predetermiado
-        this.pieceMinSize = 6; // 6 Celdas y cada celda es 32 bits
+        this.root = new BSPNode(0, 0, initialWidthRoot, initialHeigthRoot);
+        this.pieceMinSize = 8;
     }
 
     /* 
@@ -77,13 +77,13 @@ export class BSPTree {
         con esto podemos ver que si hicieramos el corte en la posición max la cual es 80, el nodo izquierdo tendría un ancho de 80 y el nodo derecho tendría un ancho de 20
         por lo que ambos nodos cumples con el tamaño minimo.
         */
-        const max = (isSplitHorizontal ? node.getHeight() : node.getWidth()) - this.pieceMinSize;
-        if (max <= this.pieceMinSize) return false; // Demasiado pequeño para dividir
+        const maxPosibleSizePiece = (isSplitHorizontal ? node.getHeight() : node.getWidth()) - this.pieceMinSize;
+        if (maxPosibleSizePiece <= this.pieceMinSize) return false; 
 
         /*
         Esta es la formula estandar para obtener un numero aleatorio entre dos valores, en este caso el rango está definido por max y minSize
         */
-        const splitPosition = Math.floor(Math.random() * (max - this.pieceMinSize + 1)) + this.pieceMinSize;
+        const splitPosition = Math.floor(Math.random() * (maxPosibleSizePiece - this.pieceMinSize + 1)) + this.pieceMinSize;
 
         // Finalmente se crean los nodos hijos, dependiendo de si el corte es horizontal o vertical.
         if (isSplitHorizontal) { // Corte Horizontal
