@@ -1,6 +1,5 @@
 import { Edge } from "../Model/Edge";
 import { Point } from "../Model/Point";
-import type { PointAndIndex } from "./PointAndIndex";
 
 export class Util {
 

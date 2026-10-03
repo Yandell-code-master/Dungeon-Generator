@@ -28,8 +28,10 @@ export class DungeonCreator {
         const bSPTreeLeaves: BSPNode[] = this.bSPTree.getLeaves();
         this.createRoomsInLeaves(bSPTreeLeaves);
 
-        const edgesToConnect = this.getEdgesToConnect();
-        this.createCorridors(edgesToConnect);
+        const allEdges = this.getEdges();
+        const mandatoryEdges = this.getMandatoryEdges(allEdges);
+        const optionalEdges = this.getOptionalEdges(mandatoryEdges, allEdges);
+        this.createCorridors(mandatoryEdges, optionalEdges);
 
         this.fillMatrixWithWalls();
         this.buildRoomsInMatrixTiles();
@@ -61,10 +63,9 @@ export class DungeonCreator {
             4.999 y luego se redondea hacia abajo a 4 y el minimo es 1 ya que a Math.random le sumamos 0.2 para que nunca de 0
 
             */
-            let numberToMultiply: number = Math.random();
 
-            let roomPositionX = Math.floor(numberToMultiply * (leaf.getWidth() - roomWidth));
-            let roomPositionY = Math.floor(numberToMultiply * (leaf.getHeight() - roomHeight));
+            let roomPositionX = Math.floor(Math.random() * (leaf.getWidth() - roomWidth));
+            let roomPositionY = Math.floor(Math.random() * (leaf.getHeight() - roomHeight));
 
             // console.log(roomPositionX, roomPositionY);
 
@@ -76,42 +77,12 @@ export class DungeonCreator {
         }
     }
 
-    private getEdgesToConnect(): Edge[] {
+    private getMandatoryEdges(allEdges: Edge[]): Edge[] {
         const centerPoints: Point[] = this.getCenterPointsFromRooms();
-        const edges: Edge[] = this.getEdges();
         const kruskal = new Kruskal();
-        const minimunSpaceTree: Edge[] = kruskal.getMSTWithKruskal(centerPoints, edges);
+        const minimunSpaceTree: Edge[] = kruskal.getMSTWithKruskal(centerPoints, allEdges);
 
-        return this.addCiclesToMST(minimunSpaceTree, edges);
-    }
-
-    private corridorCrossesOtherRoom(
-        start: Point, corner: Point, end: Point,
-        rooms: Room[], startRoom: Room, endRoom: Room
-    ): boolean {
-        const segments = [[start, corner], [corner, end]];
-
-        for (const [startPointOfSegment, endPointOfSegment] of segments) {
-            const minX = Math.min(startPointOfSegment.getPositionInX(), endPointOfSegment.getPositionInX());
-            const maxX = Math.max(startPointOfSegment.getPositionInX(), endPointOfSegment.getPositionInX());
-            const minY = Math.min(startPointOfSegment.getPositionInY(), endPointOfSegment.getPositionInY());
-            const maxY = Math.max(startPointOfSegment.getPositionInY(), endPointOfSegment.getPositionInY());
-
-            for (const room of rooms) {
-                if (room === startRoom || room === endRoom) continue;
-
-                const rx1 = room.getPositionInX();
-                const rx2 = rx1 + room.getWidth() - 1;
-                const ry1 = room.getPositionInY();
-                const ry2 = ry1 + room.getHeight() - 1;
-
-                // intersección de rectángulos
-                if (minX <= rx2 && maxX >= rx1 && minY <= ry2 && maxY >= ry1) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return minimunSpaceTree;
     }
 
     private getEdges(): Edge[] {
@@ -124,15 +95,13 @@ export class DungeonCreator {
         return Util.getEdgesFromTriangles(triangles);
     }
 
-    private addCiclesToMST(minimunSpaceTree: Edge[], edges: Edge[]): Edge[] {
+    private getOptionalEdges(minimunSpaceTree: Edge[], edges: Edge[]): Edge[] {
         const mstSet = new Set<Edge>(minimunSpaceTree);
         const extraCandidates = edges.filter(edge => !mstSet.has(edge));
 
         const extraEdges = extraCandidates.filter(() => Math.random() < 0.15);
-        const corridorEdges = [...minimunSpaceTree, ...extraEdges];
-        return corridorEdges;
+        return extraEdges;
     }
-
 
     private getRoomsFromBSPTree(): Room[] {
         const leaves = this.bSPTree.getLeaves();
@@ -160,31 +129,89 @@ export class DungeonCreator {
         return centerPoints;
     }
 
-    private createCorridors(edgesToUnite: Edge[]) {
-        let cornerPoint: Point;
+    private buildLCorridor(start: Point, end: Point, horizontalFirst: boolean): Corridor {
+        const corner = horizontalFirst
+            ? new Point(end.getPositionInX(), start.getPositionInY())
+            : new Point(start.getPositionInX(), end.getPositionInY());
+        return new Corridor(start, corner, end);
+    }
+
+    private createCorridors(mandatoryEdges: Edge[], optionalEdges: Edge[]): void {
         const corridors: Corridor[] = [];
+        const rooms: Room[] = this.getRoomsFromBSPTree();
 
-
-        for (const edge of edgesToUnite) {
+        const tryEdge = (edge: Edge, isMandatory: boolean) => {
             const startPoint: Point = edge.getStartPoint();
             const endPoint: Point = edge.getEndPoint();
+            const startRoom: Room | undefined = this.getRoomByCenterPoint(startPoint);
+            const endRoom: Room | undefined = this.getRoomByCenterPoint(endPoint);
 
-            // Tiramos una moneda para decidir si el primer tramo es Horizontal o Vertical
-            if (Math.random() < 0.5) {
-                // Ruta 1: Moverse horizontalmente primero, luego verticalmente
-                // La esquina comparte la X del destino (centerB) y la Y del origen (centerA)
-                cornerPoint = new Point(endPoint.getPositionInX(), startPoint.getPositionInY())
-            } else {
-                // Ruta 2: Moverse verticalmente primero, luego horizontalmente
-                // La esquina comparte la X del origen (centerA) y la Y del destino (centerB)
-
-                cornerPoint = new Point(startPoint.getPositionInX(), endPoint.getPositionInY())
+            if (!startRoom || !endRoom) {
+                throw new Error("No se encontró la sala de un extremo de la arista");
             }
 
-            corridors.push(new Corridor(new Point(startPoint.getPositionInX(), startPoint.getPositionInY()), cornerPoint, new Point(endPoint.getPositionInX(), endPoint.getPositionInY())));
+            const firstHorizontal: boolean = Math.random() < 0.5;
+            const options = [
+                this.buildLCorridor(startPoint, endPoint, firstHorizontal),
+                this.buildLCorridor(startPoint, endPoint, !firstHorizontal),
+            ];
+
+            const corridorNotCrossing: Corridor | undefined = options.find(c => !this.corridorCrossesOtherRoom(c, rooms, startRoom, endRoom));
+
+            if (corridorNotCrossing) {
+                corridors.push(corridorNotCrossing);
+            } else if (isMandatory) {
+                corridors.push(options[0]); // necesario para la conectividad
+            }
         }
 
+        mandatoryEdges.forEach(edge => tryEdge(edge, true));
+        optionalEdges.forEach(edge => tryEdge(edge, false));
+
         this.dungeon.setCorridors(corridors);
+    }
+
+    private corridorCrossesOtherRoom(
+        corridorToCheck: Corridor,
+        rooms: Room[], startRoom: Room, endRoom: Room
+    ): boolean {
+        const segments = [[corridorToCheck.getStart(), corridorToCheck.getCorner()], [corridorToCheck.getCorner(), corridorToCheck.getEnd()]];
+
+        for (const [startPointOfSegment, endPointOfSegment] of segments) {
+            const minX = Math.min(startPointOfSegment.getPositionInX(), endPointOfSegment.getPositionInX());
+            const maxX = Math.max(startPointOfSegment.getPositionInX(), endPointOfSegment.getPositionInX());
+            const minY = Math.min(startPointOfSegment.getPositionInY(), endPointOfSegment.getPositionInY());
+            const maxY = Math.max(startPointOfSegment.getPositionInY(), endPointOfSegment.getPositionInY());
+
+            for (const room of rooms) {
+                if (room === startRoom || room === endRoom) continue;
+
+                const startInX = room.getPositionInX();
+                const endInX = startInX + room.getWidth() - 1;
+                const startInY = room.getPositionInY();
+                const endInY = startInY + room.getHeight() - 1;
+
+                // intersección de rectángulos
+                if ((minX <= endInX && maxX >= startInX) && (minY <= endInY && maxY >= startInY)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private getRoomByCenterPoint(centerPoint: Point): Room | undefined {
+        const rooms = this.getRoomsFromBSPTree();
+
+        for (const room of rooms) {
+            const roomCenter = room.getCenterPoint();
+            if (roomCenter.getPositionInX() === centerPoint.getPositionInX() && roomCenter.getPositionInY() === centerPoint.getPositionInY()) {
+                return room;
+            }
+        }
+
+        return undefined;
     }
 
     private buildRoomsInMatrixTiles() {
