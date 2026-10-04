@@ -5,4 +5,8 @@ export class WallTile extends Tile {
         super();
         this.setColor('brown'); // Color predeterminado para los tiles de pared
     }
+
+    public isWalkable(): boolean {
+        return false;
+    }
 }

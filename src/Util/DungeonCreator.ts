@@ -12,6 +12,8 @@ import Delaunator from 'delaunator';
 import { Edge } from "../Model/Edge";
 import { Util } from "./Util";
 import { Kruskal } from "./Kruskal";
+import { Player } from "../Model/Player";
+import type { Tile } from "../Model/Tile";
 
 export class DungeonCreator {
     private bSPTree: BSPTree;
@@ -36,6 +38,11 @@ export class DungeonCreator {
         this.fillMatrixWithWalls();
         this.buildRoomsInMatrixTiles();
         this.buildCorridorInMatrixTiles();
+
+        const player = new Player(0, 0);
+        this.placePlayerInInitialPosition(player);
+        this.dungeon.setPlayer(player);
+        this.insertPlayerInDungeon(player.getPositionInX(), player.getPositionInY(), player, this.dungeon.getMatrixTiles());
     }
 
     private createRoomsInLeaves(leaves: BSPNode[]): void {
@@ -278,5 +285,27 @@ export class DungeonCreator {
 
     public getDungeon(): Dungeon {
         return this.dungeon;
+    }
+
+    public placePlayerInInitialPosition(player: Player): Player {
+        const rooms = this.getRoomsFromBSPTree();
+        const center = rooms[0].getCenterPoint();
+        return player.moveTo(center.getPositionInX(), center.getPositionInY()), player;
+    }
+
+    public insertPlayerInDungeon(positionInX: number, positionInY: number, player: Player, matrixTiles: Tile[][]): void {
+        matrixTiles[player.getPositionInY()][player.getPositionInX()] = new FloorTile(); 
+        player.moveTo(positionInX, positionInY);
+        matrixTiles[positionInY][positionInX] = player;
+    }
+
+    public isMovePossible(positionInX: number, positionInY: number): boolean{
+        const matrix = this.dungeon.getMatrixTiles();
+
+        if (matrix[positionInY]?.[positionInX]?.isWalkable()) {
+            return true;
+        }
+
+        return false;
     }
 }

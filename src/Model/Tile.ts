@@ -23,4 +23,5 @@ export abstract class Tile {
         this.size = size;
     }
 
+    public abstract isWalkable(): boolean;
 }

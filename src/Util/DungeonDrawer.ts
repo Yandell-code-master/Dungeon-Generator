@@ -4,18 +4,14 @@ import { Dungeon } from '../Model/Dungeon';
 class DungeonDrawer {
 
     // La dungeon que va a dibujar
-    private dungeon: Dungeon;
+    private dungeon: Dungeon = null as unknown as Dungeon;
 
-    constructor(dungeon: Dungeon) {
-        this.dungeon = dungeon;
+    constructor() {
     }
 
     // Método encargado de dibujar el mapa dungeon
     // Recibe el contexto del lienzo en donde va a dibjar
     public drawDungeon(context: CanvasRenderingContext2D): void {
-
-
-
         let positionInX;
         let positionInY = 0;
         let rowNumber = 0; 
@@ -36,6 +32,10 @@ class DungeonDrawer {
             
             positionInY = rowNumber * row[0].getSize(); // Actualizamos la coordenada en y, teniendo en cuenta que las celdas tiene un tamaño fijo
         }
+    }
+
+    public setDungeon(dungeon:Dungeon): void {
+        this.dungeon = dungeon;
     }
 }
 
