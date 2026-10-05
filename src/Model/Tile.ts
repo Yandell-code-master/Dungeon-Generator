@@ -1,10 +1,14 @@
+import {type SpriteRef} from '../Util/SpriteReference';
+
 export abstract class Tile {
     private size: number;
     private color: string;
+    private spriteReference: SpriteRef = null as unknown as SpriteRef;
 
-    constructor() {
+    constructor(spriteReference: SpriteRef) {
         this.size = 32; // Todos los tiles tiene le mismo tamaño
         this.color = "white" // valor predetermiado, aunque no importa por que los colores estan guardados en cada clase hija.
+        this.spriteReference = spriteReference;
     }   
 
     public getSize(): number {
@@ -24,4 +28,8 @@ export abstract class Tile {
     }
 
     public abstract isWalkable(): boolean;
+
+    public getSpriteReference(): SpriteRef {
+        return this.spriteReference;
+    }
 }

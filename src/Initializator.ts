@@ -8,9 +8,20 @@ import type { Tile } from './Model/Tile';
 const generateButton = document.getElementById('generateButton') as HTMLButtonElement;
 const dungeonDrawer: DungeonDrawer = new DungeonDrawer();
 const dungeonCreator: DungeonCreator = new DungeonCreator(59, 25);
+const canvasContext = (document.getElementById('canvasElement') as HTMLCanvasElement).getContext('2d');
+
+
+if (canvasContext) {
+    canvasContext.imageSmoothingEnabled = false;
+}
 
 
 generateButton.addEventListener('click', () => {
+    if (!dungeonDrawer.getSprite().complete) {
+        console.error('Sprite image not loaded yet.');
+        return;
+    }
+
     dungeonCreator.createDungeon();
     renderDungeon();
 });
@@ -18,10 +29,11 @@ generateButton.addEventListener('click', () => {
 function renderDungeon() {
     const dungeon: Dungeon = dungeonCreator.getDungeon();
     dungeonDrawer.setDungeon(dungeon);
-    const canvasContext = (document.getElementById('canvasElement') as HTMLCanvasElement).getContext('2d');
+
     if (!canvasContext) {
         return;
     }
+    
     dungeonDrawer.drawDungeon(canvasContext);
 }  
 
