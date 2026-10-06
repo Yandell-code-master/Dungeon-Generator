@@ -39,7 +39,7 @@ export class DungeonCreator {
         this.buildRoomsInMatrixTiles();
         this.buildCorridorInMatrixTiles();
 
-        const player = new Player(0, 0);
+        const player = new Player();
         this.placePlayerInInitialPosition(player);
         this.dungeon.setPlayer(player);
         this.insertPlayerInDungeon(player.getPositionInX(), player.getPositionInY(), player, this.dungeon.getMatrixTiles());

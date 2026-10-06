@@ -3,13 +3,21 @@ import { Tile } from "./Tile";
 
 
 export class FloorTile extends Tile {
+
     constructor() {
-        const spriteReference: SpriteRef = { col: 0, row: 4 };
-        super(spriteReference);
-        this.setColor('gray'); // Color predeterminado para los tiles de piso
+        super();
+        this.pickFloorSpriteReference();
     }
 
     public isWalkable(): boolean {
         return true;
+    }
+
+    private pickFloorSpriteReference(): void {
+        const FLOOR_VARIANTS: SpriteRef[] = [
+            { col: 0, row: 4 }, { col: 1, row: 4 }, { col: 2, row: 4 },
+        ];
+
+        this.spriteReference = FLOOR_VARIANTS[Math.floor(Math.random() * FLOOR_VARIANTS.length)];
     }
 }

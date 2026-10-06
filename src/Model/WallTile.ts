@@ -3,12 +3,15 @@ import { Tile } from "./Tile";
 
 export class WallTile extends Tile {
     constructor() {
-        const spriteReference: SpriteRef = { col: 0, row: 0 }; 
-        super(spriteReference);
-        this.setColor('brown'); // Color predeterminado para los tiles de pared
+        super();
+        this.pickWallSpriteReference();
     }
 
     public isWalkable(): boolean {
         return false;
+    }
+
+    private pickWallSpriteReference(): void {
+        this.spriteReference = { col: 4, row: 3 }; 
     }
 }

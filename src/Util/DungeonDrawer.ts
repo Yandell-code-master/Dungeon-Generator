@@ -17,6 +17,7 @@ class DungeonDrawer {
     public drawDungeon(context: CanvasRenderingContext2D): void {
         let positionInX;
         let positionInY = 0;
+        let spriteTileSize = 16; 
 
         
         // Recorremos toda la matriz
@@ -26,7 +27,7 @@ class DungeonDrawer {
             for (const tile of row) {
 
                 // Dibujamos la celda correspondiente
-                context.drawImage(this.sprite, tile.getSpriteReference.col * tile.getSize(), positionInY, tile.getSize(), tile.getSize(), );
+                context.drawImage(this.sprite, tile.getSpriteReference().col * spriteTileSize, tile.getSpriteReference().row * spriteTileSize, spriteTileSize, spriteTileSize, positionInX, positionInY, tile.getSize(), tile.getSize());
 
                 positionInX += tile.getSize(); // Posicion en x es movida la cantidad de pixeles que ocupa la celda
             }
