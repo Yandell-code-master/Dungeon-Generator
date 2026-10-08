@@ -5,9 +5,9 @@ import { Camara } from './Util/Camara';
 
 
 // Trae el boton que inicializa la generacion del mapa
-const generateButton = document.getElementById('generateButton') as HTMLButtonElement;
-const dungeonDrawer: DungeonDrawer = new DungeonDrawer();
-const dungeonCreator: DungeonCreator = new DungeonCreator(100, 60);
+const dungeonGenerationButton = document.getElementById('generateButton') as HTMLButtonElement;
+const dungeonDrawer: DungeonDrawer = new DungeonDrawer(25, 15);
+const dungeonCreator: DungeonCreator = new DungeonCreator(100, 100);
 const canvasContext = (document.getElementById('canvasElement') as HTMLCanvasElement).getContext('2d');
 const camara: Camara = new Camara(25, 15);
 
@@ -17,7 +17,7 @@ if (canvasContext) {
 }
 
 
-generateButton.addEventListener('click', () => {
+dungeonGenerationButton.addEventListener('click', () => {
     if (!dungeonDrawer.getSprite().complete) {
         console.error('Sprite image not loaded yet.');
         return;
@@ -35,7 +35,7 @@ function renderDungeon() {
         return;
     }
 
-    dungeonDrawer.drawDungeon(canvasContext);
+    dungeonDrawer.drawCamaraView(canvasContext);
 }
 
 function isDungeonAlreadyCreated(): boolean {

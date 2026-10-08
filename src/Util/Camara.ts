@@ -23,7 +23,7 @@ export class Camara {
 
     public getViewWidth(): number {
         return this.viewWidth;
-    }
+    }   
 
     public getViewHeight(): number {
         return this.viewHeight;

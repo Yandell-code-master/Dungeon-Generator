@@ -15,7 +15,7 @@ export class BSPTree {
 
     constructor(initialWidthRoot: number, initialHeigthRoot: number) {
         this.root = new BSPNode(0, 0, initialWidthRoot, initialHeigthRoot);
-        this.pieceMinSize = 30;
+        this.pieceMinSize = 25;
     }
 
     /* 

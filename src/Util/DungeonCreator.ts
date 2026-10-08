@@ -293,10 +293,9 @@ export class DungeonCreator {
         return player.moveTo(center.getPositionInX(), center.getPositionInY()), player;
     }
 
-    public insertPlayerInDungeon(positionInX: number, positionInY: number, player: Player, matrixTiles: Tile[][] ): void {
+    public movePlayerInDungeon(positionInX: number, positionInY: number, player: Player, matrixTiles: Tile[][] ): void {
         matrixTiles[player.getPositionInY()][player.getPositionInX()] = new FloorTile(); 
         player.moveTo(positionInX, positionInY);
-        matrixTiles[positionInY][positionInX] = player;
     }
 
     public isMovePossible(positionInX: number, positionInY: number): boolean{
