@@ -1,4 +1,3 @@
-import type { SpriteRef } from "../Util/SpriteReference";
 import { Tile } from "./Tile";
 
 export class WallTile extends Tile {

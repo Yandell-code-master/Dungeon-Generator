@@ -1,14 +1,15 @@
 import { Dungeon } from './Model/Dungeon';
 import { DungeonDrawer } from './Util/DungeonDrawer';
 import { DungeonCreator } from './Util/DungeonCreator';
-import type { Tile } from './Model/Tile';
+import { Camara } from './Util/Camara';
 
 
 // Trae el boton que inicializa la generacion del mapa
 const generateButton = document.getElementById('generateButton') as HTMLButtonElement;
 const dungeonDrawer: DungeonDrawer = new DungeonDrawer();
-const dungeonCreator: DungeonCreator = new DungeonCreator(59, 25);
+const dungeonCreator: DungeonCreator = new DungeonCreator(100, 60);
 const canvasContext = (document.getElementById('canvasElement') as HTMLCanvasElement).getContext('2d');
+const camara: Camara = new Camara(25, 15);
 
 
 if (canvasContext) {
@@ -33,9 +34,9 @@ function renderDungeon() {
     if (!canvasContext) {
         return;
     }
-    
+
     dungeonDrawer.drawDungeon(canvasContext);
-}  
+}
 
 function isDungeonAlreadyCreated(): boolean {
     return dungeonCreator.getDungeon() !== undefined;
@@ -60,10 +61,13 @@ window.addEventListener("keydown", (e) => {
     const newPositionX = player.getPositionInX() + move[0];
     const newPositionY = player.getPositionInY() + move[1];
 
-    if(!dungeonCreator.isMovePossible(newPositionX, newPositionY)) {
+    if (!dungeonCreator.isMovePossible(newPositionX, newPositionY)) {
         return;
     }
 
     dungeonCreator.insertPlayerInDungeon(newPositionX, newPositionY, player, dungeonCreator.getDungeon().getMatrixTiles());
     renderDungeon();
+
+    const { camPositionX, camPositionY } = camara.getCameraView(player, dungeonCreator.getDungeon().getWidth(), dungeonCreator.getDungeon().getHeight());
+    console.log("jugador:", player.getPositionInX(), player.getPositionInY(), "cámara:", camPositionX, camPositionY);
 });

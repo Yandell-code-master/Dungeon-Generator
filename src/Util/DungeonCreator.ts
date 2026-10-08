@@ -21,7 +21,7 @@ export class DungeonCreator {
 
     constructor(width: number, heigth: number) {
         this.dungeon = new Dungeon(width, heigth);
-        this.bSPTree = new BSPTree(this.dungeon.getWidth(), this.dungeon.getHeigth());
+        this.bSPTree = new BSPTree(this.dungeon.getWidth(), this.dungeon.getHeight());
     }
 
     public createDungeon(): void {
@@ -278,7 +278,7 @@ export class DungeonCreator {
         let matrixTileType = this.dungeon.getMatrixTiles();
 
         //Llenamos cada fila de la matriz con la cantidad respectivas de celdas de tipo wall
-        matrixTileType = matrixTileType.map(() => Array(this.dungeon.getWidth()).fill(new WallTile()))
+        matrixTileType = matrixTileType.map(() => Array.from({ length: this.dungeon.getWidth() }, () => new WallTile()));
 
         this.dungeon.setMatrixTiles(matrixTileType);
     }

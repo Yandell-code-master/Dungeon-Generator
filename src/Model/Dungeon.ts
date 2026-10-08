@@ -7,7 +7,7 @@ export class Dungeon {
     // Tanto el width como el height tienen que ser en celdas de 32 pixeles
     private width: number;
     private height: number;
-    private player: Player;
+    private player: Player = null as unknown as Player; 
 
     // Esta matriz representa el mapa del dungeon, donde cada celda contiene un valor numérico que indica el tipo de tile correspondiente.
     private matrixTileType: Tile[][];
@@ -27,7 +27,7 @@ export class Dungeon {
         return this.width;
     }
 
-    public getHeigth():number {
+    public getHeight():number {
         return this.height;
     }
 
