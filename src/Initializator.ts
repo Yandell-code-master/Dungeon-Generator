@@ -17,9 +17,16 @@ if (canvasContext) {
 }
 
 
-dungeonGenerationButton.addEventListener('click', () => {
+function isSpriteLoad(): boolean {
     if (!dungeonDrawer.getSprite().complete) {
-        console.error('Sprite image not loaded yet.');
+        return false;
+    }
+
+    return true;
+}
+
+dungeonGenerationButton.addEventListener('click', () => {
+    if (!isSpriteLoad()) {
         return;
     }
 
@@ -61,13 +68,9 @@ window.addEventListener("keydown", (e) => {
     const newPositionX = player.getPositionInX() + move[0];
     const newPositionY = player.getPositionInY() + move[1];
 
-    if (!dungeonCreator.isMovePossible(newPositionX, newPositionY)) {
+    if (!dungeonCreator.movePlayerInDungeon(newPositionX, newPositionY)) {
         return;
     }
 
-    dungeonCreator.insertPlayerInDungeon(newPositionX, newPositionY, player, dungeonCreator.getDungeon().getMatrixTiles());
     renderDungeon();
-
-    const { camPositionX, camPositionY } = camara.getCameraView(player, dungeonCreator.getDungeon().getWidth(), dungeonCreator.getDungeon().getHeight());
-    console.log("jugador:", player.getPositionInX(), player.getPositionInY(), "cámara:", camPositionX, camPositionY);
 });

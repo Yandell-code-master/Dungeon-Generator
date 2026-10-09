@@ -5,7 +5,7 @@ export abstract class Tile {
     protected spriteReference: SpriteRef = null as unknown as SpriteRef;
 
     constructor() {
-        this.size = 32; // Todos los tiles tiene le mismo tamaño
+        this.size = 32;
     }   
 
     public getSize(): number {

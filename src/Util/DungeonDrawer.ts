@@ -1,5 +1,6 @@
 import { Dungeon } from '../Model/Dungeon';
 import { Camara } from './Camara';
+import { Player } from '../Model/Player';
 
 // Esta clase está encargada de dibujar el mapa dungeon en el canvas
 class DungeonDrawer {
@@ -15,8 +16,6 @@ class DungeonDrawer {
     }
 
     public drawCamaraView(context: CanvasRenderingContext2D): void {
-        let positionInX;
-        let positionInY = 0;
         const spriteTileSize = 16;
         const matrixTiles = this.dungeon.getMatrixTiles();
 
@@ -46,6 +45,25 @@ class DungeonDrawer {
                 );
             }
         }
+
+        const player: Player = this.dungeon.getPlayer();
+        const playerSize: number = player.getSize();
+        const { col: spriteCol, row: spriteRow } = player.getSpriteReference();
+
+        const playerScreenCol = player.getPositionInX() - camPositionX;
+        const playerScreenRow = player.getPositionInY() - camPositionY;
+
+        context.drawImage(
+            this.sprite,
+            spriteCol * spriteTileSize,
+            spriteRow * spriteTileSize,
+            spriteTileSize,
+            spriteTileSize,
+            playerScreenCol * playerSize,
+            playerScreenRow * playerSize,
+            playerSize,
+            playerSize
+        );
     }
 
     public drawDungeon(context: CanvasRenderingContext2D) {
