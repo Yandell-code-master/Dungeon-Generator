@@ -14,6 +14,7 @@ import { Util } from "./Util";
 import { Kruskal } from "./Kruskal";
 import { Player } from "../Model/Player";
 import type { Tile } from "../Model/Tile";
+import { StairTile } from "../Model/StairTile";
 
 export class DungeonCreator {
     private bSPTree: BSPTree;
@@ -42,6 +43,8 @@ export class DungeonCreator {
         const player = new Player();
         this.movePlayerInInitialPosition(player);
         this.dungeon.setPlayer(player);
+        
+        this.placeStair();
     }
 
     private createRoomsInLeaves(leaves: BSPNode[]): void {
@@ -286,13 +289,13 @@ export class DungeonCreator {
         return this.dungeon;
     }
 
-    public movePlayerInInitialPosition(player: Player): Player {
+    private movePlayerInInitialPosition(player: Player): Player {
         const rooms = this.getRoomsFromBSPTree();
         const center = rooms[0].getCenterPoint();
         return player.moveTo(center.getPositionInX(), center.getPositionInY()), player;
     }
 
-    private isMovePossible(positionInX: number, positionInY: number): boolean{
+    private isMovePossible(positionInX: number, positionInY: number): boolean {
         const matrix = this.dungeon.getMatrixTiles();
 
         if (matrix[positionInY]?.[positionInX]?.isWalkable()) {
@@ -311,5 +314,32 @@ export class DungeonCreator {
 
         player.moveTo(newPositionX, newPositionY);
         return true;
+    }
+
+    private placeStair(): void {
+        const matrixTile = this.dungeon.getMatrixTiles();
+        const farestRoomCenterPoint = this.getFarestRoomFromStart().getCenterPoint();
+        
+        matrixTile[farestRoomCenterPoint.getPositionInY()][farestRoomCenterPoint.getPositionInX()] = new StairTile();
+    }
+
+    private getFarestRoomFromStart(): Room {
+        const rooms: Room[] = this.getRoomsFromBSPTree();
+        const startRoom: Room = rooms[0];
+
+        let biggestDistance = 0;
+        let farthestRoom: Room = startRoom;
+        let startRoomCenterPoint = startRoom.getCenterPoint()
+
+        for (const room of rooms) {
+            let distanceFromStartPoint: number = Util.ecladianDistance(startRoomCenterPoint, room.getCenterPoint());
+
+            if (distanceFromStartPoint > biggestDistance) {
+                biggestDistance = distanceFromStartPoint;
+                farthestRoom = room
+            }
+        }
+
+        return farthestRoom;
     }
 }

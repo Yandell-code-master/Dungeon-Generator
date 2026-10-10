@@ -2,8 +2,6 @@ import { Edge } from "../Model/Edge";
 import { Point } from "../Model/Point";
 
 export class Util {
-
-
     public static ecladianDistance(startPoint: Point, endPoint: Point): number {
         const startPositionInX = startPoint.getPositionInX();
         const endPositionInX = endPoint.getPositionInX();

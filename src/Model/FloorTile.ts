@@ -6,14 +6,14 @@ export class FloorTile extends Tile {
 
     constructor() {
         super();
-        this.pickFloorSpriteReference();
+        this.pickSpriteTileReference();
     }
 
     public isWalkable(): boolean {
         return true;
     }
 
-    private pickFloorSpriteReference(): void {
+    protected pickSpriteTileReference(): void {
         const FLOOR_VARIANTS: SpriteRef[] = [
             { col: 0, row: 4 }, { col: 1, row: 4 }, { col: 2, row: 4 },
         ];

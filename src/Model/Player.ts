@@ -6,7 +6,7 @@ export class Player extends Tile {
 
     constructor () {
         super();
-        this.pickPlayerSpriteReference();
+        this.pickSpriteTileReference();
     }
 
     getPositionInX(): number { return this.position.getPositionInX(); }
@@ -21,7 +21,7 @@ export class Player extends Tile {
         return false;
     }
 
-    private pickPlayerSpriteReference(): void {
+    protected pickSpriteTileReference(): void {
         this.spriteReference = { col: 0, row: 7 };
     }
 }
