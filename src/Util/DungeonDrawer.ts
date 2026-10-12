@@ -1,6 +1,9 @@
 import { Dungeon } from '../Model/Dungeon';
 import { Camara } from './Camara';
 import { Player } from '../Model/Player';
+import type { SpriteRef } from './SpriteReference';
+import { TransparentTile } from '../Model/TransparentTile';
+import { Tile } from '../Model/Tile';
 
 // Esta clase está encargada de dibujar el mapa dungeon en el canvas
 class DungeonDrawer {
@@ -9,14 +12,17 @@ class DungeonDrawer {
     private dungeon: Dungeon = null as unknown as Dungeon;
     private sprite: HTMLImageElement = new Image();
     private camara: Camara;
+    private context: CanvasRenderingContext2D;
+    private spriteTileSize: number = 16;
+    private tileSize: number = 32;
 
-    constructor(camaraWidht: number, camaraHeight: number) {
+    constructor(camara: Camara, context: CanvasRenderingContext2D) {
         this.sprite.src = '/assets/tilemap_packed.png';
-        this.camara = new Camara(camaraWidht, camaraHeight);
+        this.camara = camara;
+        this.context = context;
     }
 
-    public drawCamaraView(context: CanvasRenderingContext2D): void {
-        const spriteTileSize = 16;
+    public drawCamaraView(): void {
         const matrixTiles = this.dungeon.getMatrixTiles();
 
         const { camPositionX, camPositionY } = this.camara.getCameraView(this.dungeon.getPlayer(), this.dungeon.getWidth(), this.dungeon.getHeight());
@@ -24,47 +30,51 @@ class DungeonDrawer {
         // 3. Recorrer solo las celdas de la pantalla
         for (let camaraRow = 0; camaraRow < this.camara.getViewHeight(); camaraRow++) {
             for (let camaraCol = 0; camaraCol < this.camara.getViewWidth(); camaraCol++) {
-                // 4. Qué celda del mundo toca mostrar aquí
                 const worldPositionX = camPositionX + camaraCol;
                 const worldPositionY = camPositionY + camaraRow;
                 const tile = matrixTiles[worldPositionY]?.[worldPositionX];
+                const isTileTransparent: boolean = tile instanceof TransparentTile;
                 if (!tile) continue;
 
-                const { col, row } = tile.getSpriteReference();
-
-                context.drawImage(
-                    this.sprite,
-                    col * spriteTileSize,
-                    row * spriteTileSize,
-                    spriteTileSize,
-                    spriteTileSize,
-                    camaraCol * tile.getSize(),
-                    camaraRow * tile.getSize(),
-                    tile.getSize(),
-                    tile.getSize()
-                );
+                this.drawTile(tile, camaraCol, camaraRow, isTileTransparent);
             }
         }
 
         const player: Player = this.dungeon.getPlayer();
-        const playerSize: number = player.getSize();
-        const { col: spriteCol, row: spriteRow } = player.getSpriteReference();
 
         const playerScreenCol = player.getPositionInX() - camPositionX;
         const playerScreenRow = player.getPositionInY() - camPositionY;
 
-        context.drawImage(
+        this.drawTile(player, playerScreenCol, playerScreenRow);
+    }
+
+    private drawTile(tile: Tile, screenCol: number, screenRow: number, isTransparent: boolean = false): void {
+        if (isTransparent) {
+            const transparentTile: TransparentTile = tile as TransparentTile;
+            const baseSprite: SpriteRef = transparentTile.getBaseSprite();
+
+            this.drawSprite(baseSprite, screenCol, screenRow);
+        }
+
+        const spriteReference: SpriteRef = tile.getSpriteReference();
+        this.drawSprite(spriteReference, screenCol, screenRow);
+    }
+
+
+    private drawSprite(spriteReference: SpriteRef, screenCol: number, screenRow: number) {
+        this.context.drawImage(
             this.sprite,
-            spriteCol * spriteTileSize,
-            spriteRow * spriteTileSize,
-            spriteTileSize,
-            spriteTileSize,
-            playerScreenCol * playerSize,
-            playerScreenRow * playerSize,
-            playerSize,
-            playerSize
+            spriteReference.col * this.spriteTileSize,
+            spriteReference.row * this.spriteTileSize,
+            this.spriteTileSize,
+            this.spriteTileSize,
+            screenCol * this.tileSize,
+            screenRow * this.tileSize,
+            this.tileSize,
+            this.tileSize
         );
     }
+
 
     public drawDungeon(context: CanvasRenderingContext2D) {
         let positionInX;

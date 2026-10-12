@@ -1,9 +1,13 @@
+import type { SpriteRef } from '../Util/SpriteReference';
 import { Tile } from './Tile'
+import { TransparentTile } from './TransparentTile';
 
-export class StairTile extends Tile {
+export class StairTile extends TransparentTile {
 
     constructor() {
-        super();
+        // Floor like base sprtie
+        const baseSprite: SpriteRef = {col: 0, row: 4}
+        super(baseSprite);
         this.pickSpriteTileReference();
     }
 
