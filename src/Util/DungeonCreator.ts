@@ -13,7 +13,6 @@ import { Edge } from "../Model/Edge";
 import { Util } from "./Util";
 import { Kruskal } from "./Kruskal";
 import { Player } from "../Model/Player";
-import type { Tile } from "../Model/Tile";
 import { StairTile } from "../Model/StairTile";
 
 export class DungeonCreator {
@@ -25,7 +24,7 @@ export class DungeonCreator {
         this.bSPTree = new BSPTree(this.dungeon.getWidth(), this.dungeon.getHeight());
     }
 
-    public createDungeon(): void {
+    public createDungeon(): Dungeon {
         this.bSPTree.startTreeCreation();
 
         const bSPTreeLeaves: BSPNode[] = this.bSPTree.getLeaves();
@@ -40,11 +39,11 @@ export class DungeonCreator {
         this.buildRoomsInMatrixTiles();
         this.buildCorridorInMatrixTiles();
 
-        const player = new Player();
+        const player = this.dungeon.getPlayer();
         this.movePlayerInInitialPosition(player);
-        this.dungeon.setPlayer(player);
         
         this.placeStair();
+        return this.dungeon;
     }
 
     private createRoomsInLeaves(leaves: BSPNode[]): void {
@@ -295,7 +294,7 @@ export class DungeonCreator {
         return player.moveTo(center.getPositionInX(), center.getPositionInY()), player;
     }
 
-    private isMovePossible(positionInX: number, positionInY: number): boolean {
+    public isMovePossible(positionInX: number, positionInY: number): boolean {
         const matrix = this.dungeon.getMatrixTiles();
 
         if (matrix[positionInY]?.[positionInX]?.isWalkable()) {

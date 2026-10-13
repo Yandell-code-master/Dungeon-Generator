@@ -1,13 +1,13 @@
 import { Tile } from './Tile';
 import type { Corridor } from './Corridor';
-import type { Player } from './Player';
+import { Player } from './Player';
 
 // Esta es la clase que tiene la matriz 
 export class Dungeon {
     // Tanto el width como el height tienen que ser en celdas de 32 pixeles
     private width: number;
     private height: number;
-    private player: Player = null as unknown as Player; 
+    private player: Player; 
 
     // Esta matriz representa el mapa del dungeon, donde cada celda contiene un valor numérico que indica el tipo de tile correspondiente.
     private matrixTileType: Tile[][];
@@ -20,6 +20,8 @@ export class Dungeon {
 
         // La matriz de tipo de celdas comienza vacía
         this.matrixTileType = Array(height).fill(null);
+
+        this.player = new Player();
     }
 
 
@@ -49,9 +51,5 @@ export class Dungeon {
 
     public getPlayer(): Player {
         return this.player;
-    }
-
-    public setPlayer(player: Player): void {
-        this.player = player;
     }
 }

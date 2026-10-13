@@ -1,5 +1,4 @@
 import type { SpriteRef } from '../Util/SpriteReference';
-import { Tile } from './Tile'
 import { TransparentTile } from './TransparentTile';
 
 export class StairTile extends TransparentTile {
@@ -17,5 +16,9 @@ export class StairTile extends TransparentTile {
 
     public isWalkable(): boolean {
         return true;
+    }
+
+    public onEnter() {
+        
     }
 }

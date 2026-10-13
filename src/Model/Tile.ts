@@ -18,6 +18,7 @@ export abstract class Tile {
 
     public abstract isWalkable(): boolean;
     protected abstract pickSpriteTileReference(): void;
+    public abstract onEnter(): any;
 
     public getSpriteReference(): SpriteRef {
         return this.spriteReference;

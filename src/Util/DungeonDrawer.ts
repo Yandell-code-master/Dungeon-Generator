@@ -26,8 +26,6 @@ class DungeonDrawer {
         const matrixTiles = this.dungeon.getMatrixTiles();
 
         const { camPositionX, camPositionY } = this.camara.getCameraView(this.dungeon.getPlayer(), this.dungeon.getWidth(), this.dungeon.getHeight());
-
-        // 3. Recorrer solo las celdas de la pantalla
         for (let camaraRow = 0; camaraRow < this.camara.getViewHeight(); camaraRow++) {
             for (let camaraCol = 0; camaraCol < this.camara.getViewWidth(); camaraCol++) {
                 const worldPositionX = camPositionX + camaraCol;

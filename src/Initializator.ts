@@ -1,55 +1,22 @@
 import { Dungeon } from './Model/Dungeon';
-import { DungeonDrawer } from './Util/DungeonDrawer';
-import { DungeonCreator } from './Util/DungeonCreator';
-import { Camara } from './Util/Camara';
+import { GameManager } from './Util/GameManager';
 
-
-// Trae el boton que inicializa la generacion del mapa
 const dungeonGenerationButton = document.getElementById('generateButton') as HTMLButtonElement;
-const dungeonCreator: DungeonCreator = new DungeonCreator(100, 100);
-const canvasContext: CanvasRenderingContext2D = (document.getElementById('canvasElement') as HTMLCanvasElement).getContext('2d')!;
-canvasContext.imageSmoothingEnabled = false;
-const dungeonDrawer: DungeonDrawer = new DungeonDrawer(new Camara(25, 15), canvasContext);
-
-
-function isSpriteLoad(): boolean {
-    if (!dungeonDrawer.getSprite().complete) {
-        return false;
-    }
-
-    return true;
-}
+const gameManager: GameManager = new GameManager();
 
 dungeonGenerationButton.addEventListener('click', () => {
-    if (!isSpriteLoad()) {
-        return;
+    if (!gameManager.isSpriteLoad()) {
+        return
     }
 
-    dungeonCreator.createDungeon();
-    renderDungeon();
+    gameManager.startFirstLevel();
 });
 
-function renderDungeon() {
-    const dungeon: Dungeon = dungeonCreator.getDungeon();
-    dungeonDrawer.setDungeon(dungeon);
-
-    if (!canvasContext) {
-        return;
-    }
-
-    dungeonDrawer.drawCamaraView();
-}
-
-function isDungeonAlreadyCreated(): boolean {
-    return dungeonCreator.getDungeon() !== undefined;
-}
 
 window.addEventListener("keydown", (e) => {
-    if (!isDungeonAlreadyCreated()) {
+    if (!gameManager.isDungeonAlreadyCreated()) {
         return;
     }
-
-    const player = dungeonCreator.getDungeon().getPlayer();
 
     const moves: Record<string, [number, number]> = {
         ArrowUp: [0, -1], ArrowDown: [0, 1],
@@ -60,12 +27,5 @@ window.addEventListener("keydown", (e) => {
     const move = moves[e.key];
     if (!move) return;
 
-    const newPositionX = player.getPositionInX() + move[0];
-    const newPositionY = player.getPositionInY() + move[1];
-
-    if (!dungeonCreator.movePlayerInDungeon(newPositionX, newPositionY)) {
-        return;
-    }
-
-    renderDungeon();
+    gameManager.movePlayer(move);
 });
