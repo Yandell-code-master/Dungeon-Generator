@@ -1,3 +1,4 @@
+import type { GameManager } from "../Util/GameManager";
 import { Point } from "./Point";
 import { Tile } from "./Tile";
 
@@ -9,8 +10,9 @@ export class Player extends Tile {
         this.pickSpriteTileReference();
     }
 
-    getPositionInX(): number { return this.position.getPositionInX(); }
-    getPositionInY(): number { return this.position.getPositionInY(); }
+    public getPosition(): Point {
+        return this.position;
+    }
 
     public moveTo(x: number, y: number): void {
         this.position.setPositionInX(x);
@@ -23,5 +25,9 @@ export class Player extends Tile {
 
     protected pickSpriteTileReference(): void {
         this.spriteReference = { col: 0, row: 7 };
+    }
+
+    public onEnter(gameManager: GameManager) {
+        return;
     }
 }

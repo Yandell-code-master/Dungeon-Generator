@@ -1,4 +1,3 @@
-import { Dungeon } from './Model/Dungeon';
 import { GameManager } from './Util/GameManager';
 
 const dungeonGenerationButton = document.getElementById('generateButton') as HTMLButtonElement;

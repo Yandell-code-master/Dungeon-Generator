@@ -1,5 +1,5 @@
 import { Player } from "../Model/Player";
-
+import { Point } from "../Model/Point";
 
 export class Camara {
     private viewWidth: number;
@@ -16,8 +16,10 @@ export class Camara {
 
     }
     public getCameraView(player: Player, mapWidth: number, mapHeight: number) {
-        const camPositionX = this.clamp(player.getPositionInX() - Math.floor(this.getViewWidth() / 2), 0, mapWidth - this.getViewWidth());
-        const camPositionY = this.clamp(player.getPositionInY() - Math.floor(this.getViewHeight() / 2), 0, mapHeight - this.getViewHeight());
+        const playerPosition: Point = player.getPosition();
+
+        const camPositionX = this.clamp(playerPosition.getPositionInX() - Math.floor(this.getViewWidth() / 2), 0, mapWidth - this.getViewWidth());
+        const camPositionY = this.clamp(playerPosition.getPositionInY() - Math.floor(this.getViewHeight() / 2), 0, mapHeight - this.getViewHeight());
         return { camPositionX, camPositionY};
     }
 

@@ -3,6 +3,8 @@ import { DungeonCreator } from "./DungeonCreator";
 import { Camara } from "./Camara";
 import type { Dungeon } from "../Model/Dungeon";
 import type { Player } from "../Model/Player";
+import { Point } from "../Model/Point";
+import { Tile } from "../Model/Tile";
 
 export class GameManager {
     private dungeonCreator: DungeonCreator = new DungeonCreator(100, 100);
@@ -47,21 +49,23 @@ export class GameManager {
 
     public movePlayer(move: number[]): void {
         const player: Player = this.dungeon.getPlayer();
-        const newPositionX = player.getPositionInX() + move[0];
-        const newPositionY = player.getPositionInY() + move[1];
+        const newPositionX = player.getPosition().getPositionInX() + move[0];
+        const newPositionY = player.getPosition().getPositionInY() + move[1];
 
-        if (this.dungeonCreator.)
+        if (!this.dungeonCreator.movePlayerInDungeon(newPositionX, newPositionY)) {
+            return;
+        }  
 
+        this.getOnEnterTileEffect();
 
+        this.renderDungeon();
     }
 
+    public getOnEnterTileEffect() {
+        const matrixTile: Tile[][] = this.dungeon.getMatrixTiles()
+        const playerPosition: Point = this.dungeon.getPlayer().getPosition();
+        const tilePlayerIsOn: Tile = matrixTile[playerPosition.getPositionInX()][playerPosition.getPositionInY()];
 
-    const newPositionX = player.getPositionInX() + move[0];
-    const newPositionY = player.getPositionInY() + move[1];
-
-    if(!dungeonCreator.movePlayerInDungeon(newPositionX, newPositionY)) {
-    return;
+        tilePlayerIsOn.onEnter(this);
     }
-
-    gameManager.renderDungeon();
 }

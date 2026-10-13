@@ -1,3 +1,4 @@
+import type { GameManager } from '../Util/GameManager';
 import type { SpriteRef } from '../Util/SpriteReference';
 import { TransparentTile } from './TransparentTile';
 
@@ -18,7 +19,7 @@ export class StairTile extends TransparentTile {
         return true;
     }
 
-    public onEnter() {
-        
+    public onEnter(gameManager: GameManager) {
+        gameManager.goToNextLevel();
     }
 }

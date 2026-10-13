@@ -4,6 +4,7 @@ import { Player } from '../Model/Player';
 import type { SpriteRef } from './SpriteReference';
 import { TransparentTile } from '../Model/TransparentTile';
 import { Tile } from '../Model/Tile';
+import { Point } from '../Model/Point';
 
 // Esta clase está encargada de dibujar el mapa dungeon en el canvas
 class DungeonDrawer {
@@ -39,9 +40,10 @@ class DungeonDrawer {
         }
 
         const player: Player = this.dungeon.getPlayer();
+        const playerPosition: Point = player.getPosition();
 
-        const playerScreenCol = player.getPositionInX() - camPositionX;
-        const playerScreenRow = player.getPositionInY() - camPositionY;
+        const playerScreenCol = playerPosition.getPositionInX() - camPositionX;
+        const playerScreenRow = playerPosition.getPositionInY() - camPositionY;
 
         this.drawTile(player, playerScreenCol, playerScreenRow);
     }

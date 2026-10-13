@@ -1,3 +1,4 @@
+import type { GameManager } from '../Util/GameManager';
 import {type SpriteRef} from '../Util/SpriteReference';
 
 export abstract class Tile {
@@ -18,7 +19,7 @@ export abstract class Tile {
 
     public abstract isWalkable(): boolean;
     protected abstract pickSpriteTileReference(): void;
-    public abstract onEnter(): any;
+    public abstract onEnter(gameManager: GameManager): any;
 
     public getSpriteReference(): SpriteRef {
         return this.spriteReference;
