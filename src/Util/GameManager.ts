@@ -5,6 +5,7 @@ import type { Dungeon } from "../Model/Dungeon";
 import type { Player } from "../Model/Player";
 import { Point } from "../Model/Point";
 import { Tile } from "../Model/Tile";
+import type { WalkableTile } from "../Model/WalkableTile";
 
 export class GameManager {
     private dungeonCreator: DungeonCreator = new DungeonCreator(100, 100);
@@ -57,15 +58,14 @@ export class GameManager {
         }  
 
         this.getOnEnterTileEffect();
-
         this.renderDungeon();
     }
 
     public getOnEnterTileEffect() {
-        const matrixTile: Tile[][] = this.dungeon.getMatrixTiles()
+        const matrixTile: Tile[][] = this.dungeon.getMatrixTiles();
         const playerPosition: Point = this.dungeon.getPlayer().getPosition();
-        const tilePlayerIsOn: Tile = matrixTile[playerPosition.getPositionInX()][playerPosition.getPositionInY()];
-
+        const tilePlayerIsOn: WalkableTile = matrixTile[playerPosition.getPositionInY()][playerPosition.getPositionInX()] as WalkableTile;
+        
         tilePlayerIsOn.onEnter(this);
     }
 }

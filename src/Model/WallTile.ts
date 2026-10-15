@@ -1,16 +1,13 @@
-import { Tile } from "./Tile";
+import type { GameManager } from "../Util/GameManager";
+import { NoneWalkableTile } from "./NoneWalkableTile";
 
-export class WallTile extends Tile {
+export class WallTile extends NoneWalkableTile {
     constructor() {
         super();
-        this.pickWallSpriteReference();
+        this.pickSpriteTileReference();
     }
 
-    public isWalkable(): boolean {
-        return false;
-    }
-
-    private pickWallSpriteReference(): void {
+    protected pickSpriteTileReference(): void {
         this.spriteReference = { col: 4, row: 3 }; 
     }
 }

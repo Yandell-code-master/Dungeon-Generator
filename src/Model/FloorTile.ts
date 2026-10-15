@@ -1,16 +1,13 @@
+import type { GameManager } from "../Util/GameManager";
 import type { SpriteRef } from "../Util/SpriteReference";
-import { Tile } from "./Tile";
+import { WalkableTile } from "./WalkableTile";
 
 
-export class FloorTile extends Tile {
+export class FloorTile extends WalkableTile {
 
     constructor() {
         super();
         this.pickSpriteTileReference();
-    }
-
-    public isWalkable(): boolean {
-        return true;
     }
 
     protected pickSpriteTileReference(): void {
@@ -19,5 +16,9 @@ export class FloorTile extends Tile {
         ];
 
         this.spriteReference = FLOOR_VARIANTS[Math.floor(Math.random() * FLOOR_VARIANTS.length)];
+    }
+
+    public onEnter(gameManager: GameManager): any {
+        return;
     }
 }

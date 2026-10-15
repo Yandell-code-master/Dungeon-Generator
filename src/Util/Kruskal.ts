@@ -1,7 +1,6 @@
 import { Edge } from "../Model/Edge"
 import { UnionFind } from "./UnionFind"
 import { Point } from "../Model/Point";
-import { Util } from "./Util";
 
 export class Kruskal {
     public getMSTWithKruskal(points: Point[], edgesWithWeight: Edge[]): Edge[] {

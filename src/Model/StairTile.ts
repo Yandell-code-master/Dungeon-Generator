@@ -1,13 +1,10 @@
 import type { GameManager } from '../Util/GameManager';
-import type { SpriteRef } from '../Util/SpriteReference';
-import { TransparentTile } from './TransparentTile';
+import { WalkableTile } from './WalkableTile';
 
-export class StairTile extends TransparentTile {
+export class StairTile extends WalkableTile {
 
     constructor() {
-        // Floor like base sprtie
-        const baseSprite: SpriteRef = {col: 0, row: 4}
-        super(baseSprite);
+        super();
         this.pickSpriteTileReference();
     }
 
