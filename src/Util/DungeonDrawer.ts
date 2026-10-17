@@ -5,7 +5,7 @@ import type { SpriteRef } from './SpriteReference';
 import { TransparentTile } from '../Model/TransparentTile';
 import { Tile } from '../Model/Tile';
 import { Point } from '../Model/Point';
-import type { FogOfWar } from './FogOfWar';
+import { FogOfWar } from './FogOfWar';
 
 // Esta clase está encargada de dibujar el mapa dungeon en el canvas
 class DungeonDrawer {
@@ -18,7 +18,6 @@ class DungeonDrawer {
     private spriteTileSize: number = 16;
     private tileSize: number = 32;
     private fogOfWar: FogOfWar = null as unknown as FogOfWar;
-
 
     constructor(camara: Camara, context: CanvasRenderingContext2D) {
         this.sprite.src = '/assets/tilemap_packed.png';
@@ -47,9 +46,14 @@ class DungeonDrawer {
 
                 if (!this.fogOfWar.isExplored(worldPositionX, worldPositionY)) {
                     this.drawFog(camaraCol, camaraRow, 1)
+                    continue;
                 }
 
                 this.drawTile(tile, camaraCol, camaraRow, isTileTransparent);
+
+                if (!this.fogOfWar.isVisible(worldPositionX, worldPositionY, playerPositionX, playerPositionY)) {
+                    this.drawFog(camaraCol, camaraRow, 0.6);
+                }
             }
         }
 
@@ -57,6 +61,16 @@ class DungeonDrawer {
         const playerScreenRow = playerPosition.getPositionInY() - camPositionY;
 
         this.drawTile(player, playerScreenCol, playerScreenRow);
+    }
+
+    private drawFog(screenCol: number, screenRow: number, opacity: number): void {
+        this.context.fillStyle = `rgba(0, 0, 0, ${opacity})`;
+        this.context.fillRect(
+            screenCol * this.tileSize,
+            screenRow * this.tileSize,
+            this.tileSize,
+            this.tileSize
+        );
     }
 
     private drawTile(tile: Tile, screenCol: number, screenRow: number, isTransparent: boolean = false): void {
@@ -109,19 +123,14 @@ class DungeonDrawer {
 
     public setDungeon(dungeon: Dungeon): void {
         this.dungeon = dungeon;
-
     }
 
     public getSprite(): HTMLImageElement {
         return this.sprite;
     }
 
-    
-    private setFogOfWar(fogOfWar: FogOfWar): boolean {
-        if (this.dungeon === null) return false;
-
+    public setFogOfWar(fogOfWar: FogOfWar): void {
         this.fogOfWar = fogOfWar;
-        return true;
     }
 }
 

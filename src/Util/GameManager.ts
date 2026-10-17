@@ -6,6 +6,7 @@ import type { Player } from "../Model/Player";
 import { Point } from "../Model/Point";
 import { Tile } from "../Model/Tile";
 import type { WalkableTile } from "../Model/WalkableTile";
+import { FogOfWar } from "./FogOfWar";
 
 export class GameManager {
     private dungeonCreator: DungeonCreator = new DungeonCreator(100, 100);
@@ -14,6 +15,8 @@ export class GameManager {
 
     private levelQuantity: number = 1;
     private dungeon: Dungeon = null as unknown as Dungeon;
+    private fogOfWar: FogOfWar = null as unknown as FogOfWar;
+    private player: Player = null as unknown as Player;
 
     constructor() {
         this.canvasContext.imageSmoothingEnabled = false;
@@ -22,6 +25,16 @@ export class GameManager {
     public startFirstLevel(): void {
         this.dungeon = this.dungeonCreator.createDungeon();
         this.dungeonDrawer.setDungeon(this.dungeon);
+
+        this.fogOfWar = this.dungeon.getFogOfWar()
+        this.dungeonDrawer.setFogOfWar(this.fogOfWar);
+
+        this.player = this.dungeon.getPlayer();
+
+        const playerPositionX: number = this.dungeon.getPlayer().getPosition().getPositionInX();
+        const playerPositionY: number = this.dungeon.getPlayer().getPosition().getPositionInY();
+
+        this.fogOfWar.reveal(playerPositionX, playerPositionY);
         this.renderDungeon();
     }
 
@@ -29,7 +42,19 @@ export class GameManager {
         this.levelQuantity++;
 
         this.dungeonCreator.createDungeon();
+
+        
+
+        this.fogOfWar.restartFog();
+        this.startFogOfWar();
+
         this.renderDungeon();
+    }
+
+    private FogOfWar(player: Player) {
+        const position: Point = player.getPosition();
+
+        this.fogOfWar.reveal(position.getPositionInX(), position.getPositionInY());
     }
 
     public isSpriteLoad(): boolean {
@@ -55,8 +80,9 @@ export class GameManager {
 
         if (!this.dungeonCreator.movePlayerInDungeon(newPositionX, newPositionY)) {
             return;
-        }  
+        }
 
+        this.fogOfWar.reveal(newPositionX, newPositionY);
         this.getOnEnterTileEffect();
         this.renderDungeon();
     }
@@ -65,7 +91,7 @@ export class GameManager {
         const matrixTile: Tile[][] = this.dungeon.getMatrixTiles();
         const playerPosition: Point = this.dungeon.getPlayer().getPosition();
         const tilePlayerIsOn: WalkableTile = matrixTile[playerPosition.getPositionInY()][playerPosition.getPositionInX()] as WalkableTile;
-        
+
         tilePlayerIsOn.onEnter(this);
     }
 }

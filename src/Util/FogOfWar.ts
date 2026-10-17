@@ -1,5 +1,5 @@
 export class FogOfWar {
-    private explored: boolean[][];
+    private explored: boolean[][] = null as unknown as boolean[][];
 
     private width: number;
     private height: number;
@@ -10,13 +10,17 @@ export class FogOfWar {
         this.height = height;
         this.radius = radius;
 
+        this.initializeFogMatrix(height, width)
+    }
+
+    private initializeFogMatrix(height: number, width: number): void {
         this.explored = Array.from({ length: height }, () =>
             Array.from({ length: width }, () => false)
         );
     }
 
     // Marca como explorado todo lo que está dentro del radio del jugador
-    reveal(playerCol: number, playerRow: number): void {
+    public reveal(playerCol: number, playerRow: number): void {
         const squaredRadio = this.radius * this.radius;
 
         /* Los valores row y col valores iniciales de 6 celdas hacia la izquierda y hacia arriba respectivamente del jugador
@@ -39,16 +43,21 @@ export class FogOfWar {
         }
     }
 
-    isExplored(col: number, row: number): boolean {
+    public isExplored(col: number, row: number): boolean {
 
         /* Si this.exploredd[row] es undefined en vez de que se intente acceder a una indice de un undefined evalua todo como undefined y 
         luego el ?? devuelve false si es undefined y si es cualquier otra cosa devuelve el this.explored[row]?.[col] */
         return this.explored[row]?.[col] ?? false;
     }
 
-    isVisible(col: number, row: number, playerCol: number, playerRow: number): boolean {
+    public isVisible(col: number, row: number, playerCol: number, playerRow: number): boolean {
         const distanceFromPlayerX = col - playerCol;
         const distanceFromPlayerY = row - playerRow;
         return distanceFromPlayerX * distanceFromPlayerX + distanceFromPlayerY * distanceFromPlayerY <= this.radius * this.radius;
+    }
+
+    public restartFog() {
+        this.explored = [];
+        this.initializeFogMatrix(this.height, this.width);
     }
 }

@@ -1,4 +1,3 @@
-import type { GameManager } from "../Util/GameManager";
 import { NoneWalkableTile } from "./NoneWalkableTile";
 
 export class WallTile extends NoneWalkableTile {
