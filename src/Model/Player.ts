@@ -1,33 +1,15 @@
-import type { GameManager } from "../Util/GameManager";
-import { Point } from "./Point";
-import { Tile } from "./Tile";
+import { Entity } from "./Entity";
 
-export class Player extends Tile {
-    private position : Point = new Point(0, 0);
+export class Player extends Entity {
 
     constructor () {
         super();
-        this.pickSpriteTileReference();
+        this.pickSpriteReference();
     }
 
-    public getPosition(): Point {
-        return this.position;
-    }
 
-    public moveTo(x: number, y: number): void {
-        this.position.setPositionInX(x);
-        this.position.setPositionInY(y);
-    }
 
-    public isWalkable(): boolean {
-        return false;
-    }
-
-    protected pickSpriteTileReference(): void {
-        this.spriteReference = { col: 0, row: 7 };
-    }
-
-    public onEnter(gameManager: GameManager) {
-        return;
+    protected pickSpriteReference(): void {
+        super.setSpriteReference({ col: 0, row: 7 });
     }
 }

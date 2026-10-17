@@ -26,7 +26,8 @@ export class GameManager {
         this.dungeon = this.dungeonCreator.createDungeon();
         this.dungeonDrawer.setDungeon(this.dungeon);
 
-        this.fogOfWar = this.dungeon.getFogOfWar()
+        this.fogOfWar = this.dungeon.getFogOfWar();
+        this.fogOfWar.restartFog();
         this.dungeonDrawer.setFogOfWar(this.fogOfWar);
 
         this.player = this.dungeon.getPlayer();

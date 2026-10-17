@@ -2,6 +2,7 @@ import { Tile } from './Tile';
 import type { Corridor } from './Corridor';
 import { Player } from './Player';
 import { FogOfWar } from '../Util/FogOfWar';
+import type { Enemy } from './Enemy';
 
 // Esta es la clase que tiene la matriz 
 export class Dungeon {
@@ -15,6 +16,7 @@ export class Dungeon {
 
     private corridors: Corridor[] = Array().fill(null);
     private fogOfWar: FogOfWar;
+    private enemies: Enemy[][];
 
     constructor(width: number, height: number) {
         this.width = width;
@@ -25,6 +27,7 @@ export class Dungeon {
 
         this.player = new Player();
         this.fogOfWar = new FogOfWar(this.width, this.height, 6);
+        this.enemies = 
     }
 
 
