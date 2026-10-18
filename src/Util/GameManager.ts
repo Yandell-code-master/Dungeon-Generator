@@ -41,14 +41,8 @@ export class GameManager {
 
     public goToNextLevel(): void {
         this.levelQuantity++;
-
         this.dungeonCreator.createDungeon();
-
-        
-
         this.fogOfWar.restartFog();
-        this.startFogOfWar();
-
         this.renderDungeon();
     }
 

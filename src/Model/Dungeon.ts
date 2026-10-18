@@ -16,7 +16,7 @@ export class Dungeon {
 
     private corridors: Corridor[] = Array().fill(null);
     private fogOfWar: FogOfWar;
-    private enemies: Enemy[][];
+    private enemies: Enemy[];
 
     constructor(width: number, height: number) {
         this.width = width;
@@ -27,9 +27,34 @@ export class Dungeon {
 
         this.player = new Player();
         this.fogOfWar = new FogOfWar(this.width, this.height, 6);
-        this.enemies = 
+        this.enemies = Array.from({length: this.height * this.width});
     }
 
+    public isEnemyIn(col: number, row: number): boolean {
+        for (let enemy of this.enemies) {
+            const positionInX = enemy.getPosition().getPositionInX();
+            const positionInY = enemy.getPosition().getPositionInY();
+
+            if (positionInX === col && positionInY === row) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public getEnemyAt(col: number, row: number): Enemy | undefined  {
+        for (let enemy of this.enemies) {
+            const positionInX = enemy.getPosition().getPositionInX();
+            const positionInY = enemy.getPosition().getPositionInY();
+
+            if (positionInX === col && positionInY === row) {
+                return enemy;
+            }
+        }
+
+        return undefined;
+    }
 
     public getWidth(): number {
         return this.width;
@@ -61,5 +86,9 @@ export class Dungeon {
 
     public getFogOfWar(): FogOfWar {
         return this.fogOfWar;
+    }
+
+    public getEnemies(): Enemy[] {
+        return this.enemies;
     }
 }

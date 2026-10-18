@@ -14,6 +14,7 @@ import { Util } from "./Util";
 import { Kruskal } from "./Kruskal";
 import { Player } from "../Model/Player";
 import { StairTile } from "../Model/StairTile";
+import { Enemy } from "../Model/Enemy";
 
 export class DungeonCreator {
     private bSPTree: BSPTree;
@@ -41,7 +42,9 @@ export class DungeonCreator {
 
         const player = this.dungeon.getPlayer();
         this.movePlayerInInitialPosition(player);
-        
+
+        this.placeEnemies();
+
         this.placeStair();
         return this.dungeon;
     }
@@ -318,7 +321,7 @@ export class DungeonCreator {
     private placeStair(): void {
         const matrixTile = this.dungeon.getMatrixTiles();
         const farestRoomCenterPoint = this.getFarestRoomFromStart().getCenterPoint();
-        
+
         matrixTile[farestRoomCenterPoint.getPositionInY()][farestRoomCenterPoint.getPositionInX()] = new StairTile();
     }
 
@@ -340,5 +343,28 @@ export class DungeonCreator {
         }
 
         return farthestRoom;
+    }
+
+    public placeEnemies(): void {
+        const enemies = this.dungeon.getEnemies();
+        const rooms = this.getRoomsFromBSPTree();
+
+        for (const room of rooms.slice(1)) {
+            if (Math.random() > 0.6) continue;   // ~60% de las salas tienen enemigos
+
+            const count = 1 + Math.floor(Math.random() * 2);   // 1 o 2
+
+            // En cada sale se ponen 1 o dos enemigos
+            for (let i = 0; i < count; i++) {
+                const col = room.getPositionInX() + Math.floor(Math.random() * room.getWidth());
+                const row = room.getPositionInY() + Math.floor(Math.random() * room.getHeight());
+
+                if (this.dungeon.isEnemyIn(col, row)) continue;   // evita apilar dos en la misma celda
+
+                const enemy = new Enemy();
+                enemy.moveTo(col, row);
+                enemies.push(enemy);
+            }
+        }
     }
 }

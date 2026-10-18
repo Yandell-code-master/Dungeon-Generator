@@ -6,6 +6,7 @@ import { TransparentTile } from '../Model/TransparentTile';
 import { Tile } from '../Model/Tile';
 import { Point } from '../Model/Point';
 import { FogOfWar } from './FogOfWar';
+import type { Enemy } from '../Model/Enemy';
 
 // Esta clase está encargada de dibujar el mapa dungeon en el canvas
 class DungeonDrawer {
@@ -18,6 +19,7 @@ class DungeonDrawer {
     private spriteTileSize: number = 16;
     private tileSize: number = 32;
     private fogOfWar: FogOfWar = null as unknown as FogOfWar;
+    private enemies: Enemy[] = this.dungeon.getEnemies();
 
     constructor(camara: Camara, context: CanvasRenderingContext2D) {
         this.sprite.src = '/assets/tilemap_packed.png';
@@ -50,12 +52,20 @@ class DungeonDrawer {
                 }
 
                 this.drawTile(tile, camaraCol, camaraRow, isTileTransparent);
+                
+                if (this.dungeon.isEnemyIn(worldPositionX, worldPositionY)) {
+                    this.drawTile();
+                }
 
                 if (!this.fogOfWar.isVisible(worldPositionX, worldPositionY, playerPositionX, playerPositionY)) {
                     this.drawFog(camaraCol, camaraRow, 0.6);
                 }
+
+
             }
         }
+
+
 
         const playerScreenCol = playerPosition.getPositionInX() - camPositionX;
         const playerScreenRow = playerPosition.getPositionInY() - camPositionY;
@@ -73,7 +83,7 @@ class DungeonDrawer {
         );
     }
 
-    private drawTile(tile: Tile, screenCol: number, screenRow: number, isTransparent: boolean = false): void {
+    private drawTile(tile: any, screenCol: number, screenRow: number, isTransparent: boolean = false): void {
         if (isTransparent) {
             const transparentTile: TransparentTile = tile as TransparentTile;
             const baseSprite: SpriteRef = transparentTile.getBaseSprite();
