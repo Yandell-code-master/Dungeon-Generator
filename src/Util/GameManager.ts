@@ -7,6 +7,7 @@ import { Point } from "../Model/Point";
 import { Tile } from "../Model/Tile";
 import type { WalkableTile } from "../Model/WalkableTile";
 import { FogOfWar } from "./FogOfWar";
+import type { Enemy } from "../Model/Enemy";
 
 export class GameManager {
     private dungeonCreator: DungeonCreator = new DungeonCreator(100, 100);
@@ -46,11 +47,68 @@ export class GameManager {
         this.renderDungeon();
     }
 
-    private FogOfWar(player: Player) {
-        const position: Point = player.getPosition();
+    private moveEnemies(): void {
+        for (const enemy of this.dungeon.getEnemies()) {
+            const directions: [number, number][] = [[0, -1], [0, 1], [-1, 0], [1, 0]];
+            const [distanceToMoveX, distanceToMoveY] = directions[Math.floor(Math.random() * directions.length)];
 
-        this.fogOfWar.reveal(position.getPositionInX(), position.getPositionInY());
+            const pos = enemy.getPosition();
+            const newPositionX = pos.getPositionInX() + distanceToMoveX;
+            const newPositionY = pos.getPositionInY() + distanceToMoveY;
+
+            if (this.dungeonCreator.isMovePossible(newPositionX, newPositionY)) {
+                enemy.moveTo(newPositionX, newPositionY);
+            }
+        }
     }
+
+    private canEnemySeePlayer(enemy: Enemy): boolean {
+        const squaredDetectionRadius = 6 * 6;
+
+        const playerPositionInX = this.player.getPosition().getPositionInX();
+        const playerPositionInY = this.player.getPosition().getPositionInY();
+
+        const enemyPositionInX = enemy.getPosition().getPositionInX();
+        const enemyPositionInY = enemy.getPosition().getPositionInY();
+
+        const distanceInX = playerPositionInX - enemyPositionInX;
+        const distanceInY = playerPositionInY - enemyPositionInY;
+
+        const squaredEucladianDistance = distanceInX * distanceInX + distanceInY * distanceInY;
+
+        return squaredEucladianDistance <= squaredDetectionRadius;
+    }
+
+    private stepTowardPlayer(enemy: Enemy): void {
+        const e = enemy.getPosition();
+        const p = this.dungeon.getPlayer().getPosition();
+
+        const dx = p.getPositionInX() - e.getPositionInX();
+        const dy = p.getPositionInY() - e.getPositionInY();
+
+        const stepX = Math.sign(dx);   // -1, 0 o 1
+        const stepY = Math.sign(dy); 
+
+        // Eje principal primero, el otro como alternativa
+        const candidates: [number, number][] =
+            Math.abs(dx) >= Math.abs(dy)
+                ? [[stepX, 0], [0, stepY]]
+                : [[0, stepY], [stepX, 0]];
+
+        for (const [mx, my] of candidates) {
+            if (mx === 0 && my === 0) continue;   // no hay movimiento en ese eje
+
+            const nx = e.getPositionInX() + mx;
+            const ny = e.getPositionInY() + my;
+
+            if (this.dungeon.isCellFree(nx, ny)) {
+                enemy.moveTo(nx, ny);
+                return;
+            }
+        }
+        // Si ambos están bloqueados, se queda quieto
+    }
+
 
     public isSpriteLoad(): boolean {
         return this.dungeonDrawer.getSprite().complete;
@@ -78,6 +136,7 @@ export class GameManager {
         }
 
         this.fogOfWar.reveal(newPositionX, newPositionY);
+        this.moveEnemies();
         this.getOnEnterTileEffect();
         this.renderDungeon();
     }

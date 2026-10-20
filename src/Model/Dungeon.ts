@@ -16,7 +16,7 @@ export class Dungeon {
 
     private corridors: Corridor[] = Array().fill(null);
     private fogOfWar: FogOfWar;
-    private enemies: Enemy[];
+    private enemies: Enemy[] = [];
 
     constructor(width: number, height: number) {
         this.width = width;
@@ -27,15 +27,14 @@ export class Dungeon {
 
         this.player = new Player();
         this.fogOfWar = new FogOfWar(this.width, this.height, 6);
-        this.enemies = Array.from({length: this.height * this.width});
     }
 
     public isEnemyIn(col: number, row: number): boolean {
-        for (let enemy of this.enemies) {
-            const positionInX = enemy.getPosition().getPositionInX();
-            const positionInY = enemy.getPosition().getPositionInY();
+        for (let index = 0; index < this.enemies.length; index++) {
+            const positionInX = this.enemies[index].getPosition().getPositionInX();
+            const positionInY = this.enemies[index].getPosition().getPositionInY();
 
-            if (positionInX === col && positionInY === row) {
+            if (positionInX == col && positionInY == row) {
                 return true;
             }
         }
@@ -44,12 +43,12 @@ export class Dungeon {
     }
 
     public getEnemyAt(col: number, row: number): Enemy | undefined  {
-        for (let enemy of this.enemies) {
-            const positionInX = enemy.getPosition().getPositionInX();
-            const positionInY = enemy.getPosition().getPositionInY();
+        for (let index = 0; index < this.enemies.length; index++) {
+            const positionInX = this.enemies[index].getPosition().getPositionInX();
+            const positionInY = this.enemies[index].getPosition().getPositionInY();
 
             if (positionInX === col && positionInY === row) {
-                return enemy;
+                return this.enemies[index];
             }
         }
 

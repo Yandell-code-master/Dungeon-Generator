@@ -8,6 +8,6 @@ export class Enemy extends Entity {
     }
 
     protected pickSpriteReference(): void {
-        super.setSpriteReference({col: 0, row: 10});
+        super.setSpriteReference({col: 0, row: 9});
     }
 }

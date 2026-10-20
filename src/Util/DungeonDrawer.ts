@@ -6,7 +6,7 @@ import { TransparentTile } from '../Model/TransparentTile';
 import { Tile } from '../Model/Tile';
 import { Point } from '../Model/Point';
 import { FogOfWar } from './FogOfWar';
-import type { Enemy } from '../Model/Enemy';
+import { Enemy } from '../Model/Enemy';
 
 // Esta clase está encargada de dibujar el mapa dungeon en el canvas
 class DungeonDrawer {
@@ -19,7 +19,6 @@ class DungeonDrawer {
     private spriteTileSize: number = 16;
     private tileSize: number = 32;
     private fogOfWar: FogOfWar = null as unknown as FogOfWar;
-    private enemies: Enemy[] = this.dungeon.getEnemies();
 
     constructor(camara: Camara, context: CanvasRenderingContext2D) {
         this.sprite.src = '/assets/tilemap_packed.png';
@@ -29,11 +28,11 @@ class DungeonDrawer {
 
     public drawCamaraView(): void {
         const matrixTiles = this.dungeon.getMatrixTiles();
+
         const player: Player = this.dungeon.getPlayer();
         const playerPosition: Point = player.getPosition();
         const playerPositionX: number = playerPosition.getPositionInX();
         const playerPositionY: number = playerPosition.getPositionInY();
-
 
         const { camPositionX, camPositionY } = this.camara.getCameraView(this.dungeon.getPlayer(), this.dungeon.getWidth(), this.dungeon.getHeight());
 
@@ -54,7 +53,9 @@ class DungeonDrawer {
                 this.drawTile(tile, camaraCol, camaraRow, isTileTransparent);
                 
                 if (this.dungeon.isEnemyIn(worldPositionX, worldPositionY)) {
-                    this.drawTile();
+                    const enemy = this.dungeon.getEnemyAt(worldPositionX, worldPositionY);
+
+                    this.drawTile(enemy, camaraCol, camaraRow);
                 }
 
                 if (!this.fogOfWar.isVisible(worldPositionX, worldPositionY, playerPositionX, playerPositionY)) {
@@ -64,8 +65,6 @@ class DungeonDrawer {
 
             }
         }
-
-
 
         const playerScreenCol = playerPosition.getPositionInX() - camPositionX;
         const playerScreenRow = playerPosition.getPositionInY() - camPositionY;
