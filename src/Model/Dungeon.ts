@@ -9,7 +9,7 @@ export class Dungeon {
     // Tanto el width como el height tienen que ser en celdas de 32 pixeles
     private width: number;
     private height: number;
-    private player: Player; 
+    private player: Player;
 
     // Esta matriz representa el mapa del dungeon, donde cada celda contiene un valor numérico que indica el tipo de tile correspondiente.
     private matrixTileType: Tile[][];
@@ -29,6 +29,10 @@ export class Dungeon {
         this.fogOfWar = new FogOfWar(this.width, this.height, 6);
     }
 
+    public isCellWalkableForEnemy(col: number, row: number): boolean {
+        return this.isTileWalkable(col, row) && !this.isPlayerIn(col, row) && !this.isEnemyIn(col, row);
+    }
+
     public isEnemyIn(col: number, row: number): boolean {
         for (let index = 0; index < this.enemies.length; index++) {
             const positionInX = this.enemies[index].getPosition().getPositionInX();
@@ -42,7 +46,15 @@ export class Dungeon {
         return false;
     }
 
-    public getEnemyAt(col: number, row: number): Enemy | undefined  {
+    public isTileWalkable(col: number, row: number): boolean {
+        return this.matrixTileType[row][col].isWalkable();
+    }
+
+    public isPlayerIn(col: number, row: number) {
+        return this.player.getPosition().getPositionInX() === col && this.player.getPosition().getPositionInY() === row;
+    }
+
+    public getEnemyAt(col: number, row: number): Enemy | undefined {
         for (let index = 0; index < this.enemies.length; index++) {
             const positionInX = this.enemies[index].getPosition().getPositionInX();
             const positionInY = this.enemies[index].getPosition().getPositionInY();
@@ -59,7 +71,7 @@ export class Dungeon {
         return this.width;
     }
 
-    public getHeight():number {
+    public getHeight(): number {
         return this.height;
     }
 
