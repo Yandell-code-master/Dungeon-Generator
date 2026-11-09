@@ -10,10 +10,10 @@ export class FogOfWar {
         this.height = height;
         this.radius = radius;
 
-        this.initializeFogMatrix(height, width)
+        this.initializeFogMatrix(height, width);
     }
 
-    private initializeFogMatrix(height: number, width: number): void {
+    public initializeFogMatrix(height: number, width: number): void {
         this.explored = Array.from({ length: height }, () =>
             Array.from({ length: width }, () => false)
         );
@@ -54,10 +54,5 @@ export class FogOfWar {
         const distanceFromPlayerX = col - playerCol;
         const distanceFromPlayerY = row - playerRow;
         return distanceFromPlayerX * distanceFromPlayerX + distanceFromPlayerY * distanceFromPlayerY <= this.radius * this.radius;
-    }
-
-    public restartFog() {
-        this.explored = [];
-        this.initializeFogMatrix(this.height, this.width);
     }
 }

@@ -26,6 +26,7 @@ export class DungeonCreator {
     }
 
     public createDungeon(): Dungeon {
+        this.dungeon.clearEnemies();
         this.bSPTree.startTreeCreation();
 
         const bSPTreeLeaves: BSPNode[] = this.bSPTree.getLeaves();

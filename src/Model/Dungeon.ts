@@ -102,4 +102,8 @@ export class Dungeon {
     public getEnemies(): Enemy[] {
         return this.enemies;
     }
+
+    public clearEnemies(): void {
+        this.enemies = [];
+    }
 }

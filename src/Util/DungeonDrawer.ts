@@ -3,10 +3,8 @@ import { Camara } from './Camara';
 import { Player } from '../Model/Player';
 import type { SpriteRef } from './SpriteReference';
 import { TransparentTile } from '../Model/TransparentTile';
-import { Tile } from '../Model/Tile';
 import { Point } from '../Model/Point';
 import { FogOfWar } from './FogOfWar';
-import { Enemy } from '../Model/Enemy';
 
 // Esta clase está encargada de dibujar el mapa dungeon en el canvas
 class DungeonDrawer {

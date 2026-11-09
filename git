@@ -1,0 +1,48 @@
+[33m2d7b73f[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Seguí programando el movimiento de los jugadores
+[33m43ab1d4[m Ya puse los enemigos e hice que se movieran aleatoriamente
+[33mcb4b10c[m Seguí en el proceso de poner enemigos
+[33m19e5276[m Comencé a hacer enemigos
+[33m19d1365[m Terminé la niebla de guerra
+[33m220c83c[m Seguí realizando lo de la niebla de guerra
+[33m6b9d9f2[m Ahora el jugador puede encontrar el pozo y pararse en el para generar una nueva dungeon
+[33mf447c2e[m Seguí refactorizando el codigo para que cuando el se pare encima de el pozo se genere una nueva dungeon
+[33m7c7cd02[m Estuve haciendo algunos refactirzaciones, también ya comence a hacer la interacciones del jugador con los bloques donde pisa, de forma que voy a poder hacer que cuando el jugador llegue al pozo o escalera entonces se cree un nuevo nivel
+[33m0a94a0f[m Hice unas modificaciones para que pintara un sprite base para los sprite que son transparentes
+[33m7a3dadb[m Hice que se pusiera una escalera en la habitación mas lejana del inicio del jugador, bueno realmente es un pozo
+[33m1bbfce9[m Acabo de terminar todo el tema de la camara, ahora funciona perfectamente, hice también una modificación importante, en donde ahora el jugador no está directamente en la dungeon, sino que se dibuja sobre una tile diferente eso resuelve varios problemas sigue siendo una tile pero ahora no esta insertado en la matriz
+[33m272e111[m Realicé la función que dibuja la camara funciona perfectamente
+[33m319c030[m Estoy realizando una funcionalidad de una camara ahora, osea que no se dibuje todo el mapa completo en todo momento sino que se dibuje solamente lo que está cerca del jugador
+[33mb0c15cb[m Ya dibuja los sprites en vez de dibujar cuadros de colores
+[33m039fc9d[m Ya comence a hacer que la dungeon se dibuje con sprites en vez de cuadros coloreados
+[33mca49b77[m Hice todo lo necesario para que se dibujara el jugador que por ahora es simplemente un caudro azul y tambien se puede mover
+[33mf86305d[m Termine el metodo que genera los corredores, hice una validacion de que los corredores no pasen por rooms que no son sus rooms de inicio o fin
+[33m45a5bbb[m Ya puse a funcionar el metodo para generar los corredores con Kruskal y por ahora bien, pero encontré el problema de que algunos corredores se solapan con las habitaciones, entonces voy a resolver ese problema ahora
+[33ma9288eb[m Ya termine de actualizar el codigo para que ahora los corridors se hagan con kruskal, vamos a ver que pasa no lo he probado
+[33m7093cad[m Modifiqué el metodo que hace los corredores en la matriz para que ya no agarre un lista de rooms que no tenía mumucho sentido ahora agarra una lista de arista que son las conexiones y esas aristas tienen los puntos
+[33ma5adff4[m Ya termine el metodo que me devuelve el MST ahora hice tambien el metodo que le agrega ciclos al MST para que no sea una mazmorra completamente lineal
+[33m3faaaf3[m Pasé casi que toda la hora hablando con cluade para poder seguir entendiendo UnionFind, creo que ya mas o menos lo entiendo todo tiene algo de matematicas por detras de como funciona
+[33mf5d50ef[m Ya entendí mas o menos el UnionFind, encerio que fue dificil, ahora estoy escribiendo el resto del codigo para que ya funcione kruskal, estoy refactorizando el codigo que obtiene los triangles
+[33mecce0d7[m Seguí intentando comprender el algoritmo de UnionFind, está complicado pero lo voy a lograr puse algunos comentarios
+[33m8ece45a[m Refactorice un poco de codigo en UnionFindTree para que fuera más legible
+[33m43e437c[m Agregue la clase Kruskal la cual va a encargarse de devolver el arbol mst utilizando el metodo kruskal
+[33m3386f52[m Agregue la clase UnionFindTree
+[33m21eccf8[m Sigo programando la función que me va adar los corredores de los pasillos
+[33mae97505[m Hice unas reperaciones al codigo que eran necesarias por unos cambios que había hecho anteriormente que lo rompieron
+[33m776e146[m Seguí desarrollando el metodo que me va a dar la conexión entre las rooms y ademas cree una separación Util y ahí cree un archivo Util con una clase Util en donde estarán todas los metodos estaticos de utilidades como puede ser calcular la distancia ecladiana
+[33mc5fc5c4[m Hice un metodo que me da una lista con los puntos centrales de cada habitacion, ahora sigo desarrollando el metodo que me va a devolver todas las conexiones entre habitaciones, es el que va a utilizar la triangulación, luego calcular el peso de cada arista con la formula de la distancia eucladiana y por ultimo el metodo de Kruskal que me dará las conexiones necsearias sin ciclos.
+[33m07f65a2[m Hice unos cambios en el codigo que genera la posicion de las habitaciones de forma que ya no pueden salir pegadas entre ellas y tampoco pueden salir pegadas al borde del mapa, ahora estoy desarrollando el metodo que me va a permitir hacer una mejor conexión de las habitaciones utilizando triangulacion dulenay y kruskal
+[33m2d64f86[m Instale la libreria para poder hacer triangulación de dualenay que esa es lo que vamos a utilizar ahora para conectar las habitaciones ya que la forma en que las estoy conectando ahora no es muy buena y los corredores no quedan muy bonitos
+[33mbcb0400[m Arregle el problema de que las habitaciones pudieran salirpegadas en el borde de sus contendores haciendo que su dos habitaciones salian pegadas en al borde continuo de una con otra entonces parecian una sola
+[33m3d7e16b[m Arregle el problema de que la dungeon se dibujaba mas pequeña que el canvas, esto era por que el tamaño de cada celda le puse 30 en vez de 32.
+[33me3ae42c[m Hoy encontré el error que había dejado ayer y lo parché, ahora el algoritmo ya funciona bien y ademas ya se dibuja en el canvas un tipo prototipo de la dungeon que todavía tiene varios errores por arreglar.
+[33mf1b29dd[m Ya termine el metodo que crea la dungeon, ademas tambien lo uní todo en el initializator.js que es el que inicializa todo el codigo.
+[33m279ade7[m Refactorice el que dibuja los corredores dos veces, todo con ayuda de gemini, la primera vez llegue a una versión que yo mismo cree gracias a algo que me dijo, despues se le mande es versión y me mandó una mucho mejor entonces deje esa versión como versión final, ademas estoy empezando a hacer el metodo que crea toda la dungeon que es el unico público
+[33m15621a2[m Hice casi por completo el metodo que mete en la matriz los corredores, me faltan unos pequeños detalles
+[33mc8ec5bd[m Primero que todo modifique la interfaz Point, ahora es una clase normal, por lo que también modifiqué el metodo createCorridors. Estaba terminando el método buildCorridorInMatrixTiles()
+[33m8945347[m Ya comencé a rellenar la matriz que luego será dibujada en el canvas. 1. Primero se rellena toda la matriz con WallTiles 2. Se construyen las habitaciones en la matriz rellenando los espacios que estan dentro de una habitacion con FloorTile 3. Dibujamos los corredores que conectan cada habitación, dibujando rellenando la con FloorTile por todo el recorrido que hace el corredor, este metodo todavia está en proceso.
+[33mdcee007[m Terminé de forma correcta el método que nos da toda los pares de nodos que se conectaran, pero todavía no me gusta por completo, no encuentro la forma de estructurarlo para que sea mas limpio mas que todo por que el metodo se llama getRepresentant, pero por dentro módifica la lista con los pares de nodos eso no me gusta por que no es codigo limpio voy a buscar una forma de repararlo
+[33m009d3bd[m Seguí con el metodo que encuentre las conexiones, llegué a lo que creía que era una respuesta pero además de que el método estaba super largo no estaba completamente bien estructurado, así que lo estoy modificando, siento que voy avanzando, algo que estoy llegando a odiar es que literalmente typescrip me dice muchos errores por que los metodos getLeftChild y getRigthChild por obvias razones en la firma dice que devuelven undifined y esto es por que efectivamente pueden ser undifined y cada vez que lo uitlizo para otra función o para llamar un metodo de algun hijo me hace primero hacer un if para ver si no son undfined por lo que eso tengo que resolverlo sí o sí.
+[33m770a399[m Empecé el metodo que voy a utilizar para ver que habitaciones se conectan con cuales, este metodo está muy complicado, pero lo quiero intentar pensar por mismo, así que voy a seguir aunque se sienta frustrante.
+[33mac1f722[m Hice lo siguiente: 1. Metodo que me deja obtener todas las habitaciones de cada hoja en una lista. 2. Encontrar el centro de cada habitacion y setearlo en su habitacion correspondiente. (Abierto a cambios ya que el centro de las rooms lo hice como dos atributos: coordenada x y coordenada y pero se puede hacer mejor con una clase Point que cree depues). 3. Metodo que crea los corredores que conectan cada par de habitaciones que debe estar conectada 4. Una interfaz llamada Point que maneja dos coordenadas x y y.
+[33m1a1142c[m Hice varios cambios
+[33mf97147b[m This is the first commit of the Dungeon Generator repository

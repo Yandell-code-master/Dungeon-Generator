@@ -18,7 +18,7 @@ export class FloorTile extends WalkableTile {
         this.spriteReference = FLOOR_VARIANTS[Math.floor(Math.random() * FLOOR_VARIANTS.length)];
     }
 
-    public onEnter(gameManager: GameManager): any {
+    public onEnter(_gameManager: GameManager): any {
         return;
     }
 }
